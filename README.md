@@ -16,22 +16,18 @@
 ### 环境要求
 
 - Node.js 16.x 或更高版本
-- npm 或 yarn 或 pnpm
+- [Bun](https://bun.sh/) 1.0.0 或更高版本
 
 ### 安装依赖
 
 ```bash
-npm install
-# 或
-yarn install
-# 或
-pnpm install
+bun install
 ```
 
 ### 开发模式
 
 ```bash
-npm run docs:dev
+bun run docs:dev
 ```
 
 网站将在 `http://localhost:5173/` 启动（如果端口被占用，会自动尝试其他端口）。
@@ -39,7 +35,7 @@ npm run docs:dev
 ### 构建生产版本
 
 ```bash
-npm run docs:build
+bun run docs:build
 ```
 
 构建产物将生成在 `docs/.vitepress/dist` 目录。
@@ -47,7 +43,7 @@ npm run docs:build
 ### 预览生产版本
 
 ```bash
-npm run docs:preview
+bun run docs:preview
 ```
 
 ## 项目结构
@@ -81,7 +77,7 @@ MIT License
 ## 联系方式
 
 - GitHub: [xih-yang](https://github.com/xih-yang)
-- Email: your.email@example.com
+- Email: yang92yxh@163.com
 
 ---
 

@@ -1,0 +1,41 @@
+name: Deploy VitePress Site to GitHub Pages
+
+on:
+  # 当推送到 main 分支时触发
+  push:
+    branches: [main]
+  # 手动触发
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 需要获取完整的历史记录
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build Site
+        run: npm run docs:build
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: docs/.vitepress/dist
+          # 设置为 true 以保持历史记录
+          keep_files: false
+          # 提交消息
+          commit_message: 'deploy: update site'
+          # 部署到 gh-pages 分支
+          publish_branch: gh-pages
