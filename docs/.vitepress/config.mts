@@ -2,6 +2,7 @@ import { defineConfig } from 'vitepress'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
+  base: '/essays/',
   title: "随笔",
   description: "逻辑之外，随笔之内",
   themeConfig: {
