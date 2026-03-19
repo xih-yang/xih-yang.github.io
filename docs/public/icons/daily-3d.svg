@@ -1,0 +1,25 @@
+<svg width="160" height="160" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="dailyBg" x1="24" y1="22" x2="132" y2="138" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F5EDFF"/>
+      <stop offset="1" stop-color="#C8BCFF"/>
+    </linearGradient>
+    <linearGradient id="dailyCard" x1="42" y1="34" x2="114" y2="122" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#F8F5FF"/>
+    </linearGradient>
+    <filter id="dailyShadow" x="8" y="14" width="144" height="138" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="12" stdDeviation="12" flood-color="#7766E7" flood-opacity="0.24"/>
+    </filter>
+  </defs>
+  <circle cx="80" cy="80" r="58" fill="url(#dailyBg)"/>
+  <g filter="url(#dailyShadow)">
+    <rect x="38" y="30" width="76" height="96" rx="20" fill="url(#dailyCard)"/>
+    <rect x="44" y="38" width="64" height="14" rx="7" fill="#D8D0FF"/>
+    <rect x="50" y="64" width="50" height="8" rx="4" fill="#E8E2FF"/>
+    <rect x="50" y="79" width="42" height="8" rx="4" fill="#E8E2FF"/>
+    <rect x="50" y="94" width="30" height="8" rx="4" fill="#E8E2FF"/>
+    <circle cx="104" cy="104" r="18" fill="#FE748B"/>
+    <path d="M95 104L101.5 110L113 97" stroke="white" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>

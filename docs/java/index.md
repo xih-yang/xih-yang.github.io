@@ -1,5 +1,10 @@
 ---
 title: JAVA
+category: 后端
+tags:
+  - Java
+  - 后端
+  - 基础
 ---
 
 # JAVA 技术随笔

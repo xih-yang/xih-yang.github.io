@@ -1,11 +1,12 @@
 {
-  "dependencies": {},
   "devDependencies": {
+    "@types/node": "^25.5.0",
     "vitepress": "^2.0.0-alpha.16"
   },
   "scripts": {
-    "docs:dev": "vitepress dev docs",
-    "docs:build": "vitepress build docs",
+    "docs:tags": "node scripts/generate-tags.mjs",
+    "docs:dev": "bun run docs:tags && vitepress dev docs",
+    "docs:build": "bun run docs:tags && vitepress build docs",
     "docs:preview": "vitepress preview docs"
   }
 }

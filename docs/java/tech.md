@@ -1,5 +1,10 @@
 ---
 title: JAVA技术
+category: 后端
+tags:
+  - Java
+  - SpringBoot3
+  - 后端
 ---
 
 # JAVA 技术

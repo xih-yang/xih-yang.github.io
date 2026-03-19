@@ -1,5 +1,10 @@
 ---
 title: 前端技术
+category: 前端
+tags:
+  - 前端
+  - Vite
+  - 工程化
 ---
 
 # 前端技术
