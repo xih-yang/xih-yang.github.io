@@ -10,15 +10,24 @@ type SidebarItem = {
 }
 
 const docsRoot = path.resolve(__dirname, '..')
-const sectionOrder = ['daily', 'knowledge', 'leetcode', 'interview', 'frontend', 'java', 'tags']
+const sectionOrder = ['知识点', '面试题', 'leetcode', 'AI', '私房推荐']
+const excludedPathPrefixes = [
+  '前端/',
+  '面试题/前端/',
+  '知识点/前端/02现代前端框架生态/3.SSR全栈/Astro/',
+  '知识点/前端/02现代前端框架生态/3.SSR全栈/Next.js/',
+  '知识点/前端/02现代前端框架生态/3.SSR全栈/Nuxt.js/',
+  '知识点/前端/02现代前端框架生态/3.SSR全栈/Qwik City/',
+  '知识点/前端/02现代前端框架生态/3.SSR全栈/Remix/',
+  '知识点/前端/02现代前端框架生态/3.SSR全栈/Solid Start/',
+  '知识点/前端/02现代前端框架生态/3.SSR全栈/SvelteKit/'
+]
 const sectionLabelMap: Record<string, string> = {
-  daily: '每日技巧',
-  knowledge: '知识点',
+  知识点: '知识点',
+  面试题: '面试题',
   leetcode: '刷题',
-  interview: '面试',
-  frontend: '前端',
-  java: 'JAVA',
-  tags: '标签'
+  AI: 'AI',
+  私房推荐: '私房推荐'
 }
 
 const nav = buildNav()
@@ -29,6 +38,23 @@ export default defineConfig({
   lang: 'zh-CN',
   title: '随笔',
   description: '逻辑之外，随笔之内',
+  ignoreDeadLinks: true,
+  vite: {
+    publicDir: path.resolve(__dirname, '../../public')
+  },
+  srcExclude: [
+    '前端/**',
+    '面试题/前端/**',
+    '知识点/前端/*.md',
+    '知识点/前端/**/!(index).md',
+    '知识点/前端/02现代前端框架生态/3.SSR全栈/Astro/**',
+    '知识点/前端/02现代前端框架生态/3.SSR全栈/Next.js/**',
+    '知识点/前端/02现代前端框架生态/3.SSR全栈/Nuxt.js/**',
+    '知识点/前端/02现代前端框架生态/3.SSR全栈/Qwik City/**',
+    '知识点/前端/02现代前端框架生态/3.SSR全栈/Remix/**',
+    '知识点/前端/02现代前端框架生态/3.SSR全栈/Solid Start/**',
+    '知识点/前端/02现代前端框架生态/3.SSR全栈/SvelteKit/**'
+  ],
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/icons/studio-logo.svg' }]
   ],
@@ -100,10 +126,13 @@ function buildSidebar() {
 
   sidebarConfig['/'] = [
     {
-      text: '示例',
+      text: '快速入口',
       items: [
-        { text: extractTitle(path.join(docsRoot, 'markdown-examples.md'), 'Markdown 示例'), link: '/markdown-examples' },
-        { text: extractTitle(path.join(docsRoot, 'api-examples.md'), '运行时 API 示例'), link: '/api-examples' }
+        { text: '知识点', link: '/知识点/' },
+        { text: '面试题', link: '/面试题/' },
+        { text: '刷题', link: '/leetcode/' },
+        { text: 'AI', link: '/AI/' },
+        { text: '私房推荐', link: '/私房推荐/' }
       ]
     }
   ]
@@ -116,14 +145,7 @@ function getTopLevelSectionDirs() {
     .filter((entry) => entry.isDirectory() && !entry.name.startsWith('.'))
     .map((entry) => entry.name)
 
-  return entries.sort((a, b) => {
-    const aIndex = sectionOrder.indexOf(a)
-    const bIndex = sectionOrder.indexOf(b)
-    if (aIndex === -1 && bIndex === -1) return a.localeCompare(b, 'zh-CN')
-    if (aIndex === -1) return 1
-    if (bIndex === -1) return -1
-    return aIndex - bIndex
-  })
+  return sectionOrder.filter((section) => entries.includes(section))
 }
 
 function buildItemsForDirectory(dir: string): SidebarItem[] {
@@ -132,6 +154,7 @@ function buildItemsForDirectory(dir: string): SidebarItem[] {
 
 function buildItemsForDirectoryInternal(dir: string, includeIndexLink: boolean): SidebarItem[] {
   const entries = fs.readdirSync(dir, { withFileTypes: true })
+    .filter((entry) => !isExcludedRelativePath(path.relative(docsRoot, path.join(dir, entry.name))))
     .filter((entry) => !entry.name.startsWith('.'))
     .sort((a, b) => sortEntries(a, b))
 
@@ -151,15 +174,17 @@ function buildItemsForDirectoryInternal(dir: string, includeIndexLink: boolean):
     const fullPath = path.join(dir, entry.name)
     if (entry.isDirectory()) {
       const nestedItems = buildItemsForDirectoryInternal(fullPath, false)
-      if (nestedItems.length > 0) {
-        const directoryIndexPath = path.join(fullPath, 'index.md')
+      const directoryIndexPath = path.join(fullPath, 'index.md')
+      const hasDirectoryIndex = fs.existsSync(directoryIndexPath)
+
+      if (nestedItems.length > 0 || hasDirectoryIndex) {
         items.push({
           text: extractDirectoryTitle(fullPath, entry.name),
-          link: fs.existsSync(directoryIndexPath)
+          link: hasDirectoryIndex
             ? toLink(path.relative(docsRoot, directoryIndexPath))
             : undefined,
           collapsed: false,
-          items: nestedItems
+          items: nestedItems.length > 0 ? nestedItems : undefined
         })
       }
       continue
@@ -203,6 +228,14 @@ function toLink(relativePath: string) {
     return normalized.slice(0, -'index.md'.length)
   }
   return normalized.replace(/\.md$/, '')
+}
+
+function isExcludedRelativePath(relativePath: string) {
+  const normalized = relativePath.replace(/\\/g, '/')
+  if (normalized.startsWith('知识点/前端/') && normalized.endsWith('.md') && normalized !== '知识点/前端/index.md' && !normalized.endsWith('/index.md')) {
+    return true
+  }
+  return excludedPathPrefixes.some((prefix) => normalized === prefix.slice(0, -1) || normalized.startsWith(prefix))
 }
 
 function formatSegment(value: string) {
