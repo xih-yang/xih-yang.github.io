@@ -1,0 +1,23 @@
+<svg width="160" height="160" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="leetBg" x1="24" y1="20" x2="136" y2="140" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F5EFFF"/>
+      <stop offset="1" stop-color="#D7C9FF"/>
+    </linearGradient>
+    <filter id="leetShadow" x="12" y="14" width="138" height="136" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="12" stdDeviation="12" flood-color="#7766E7" flood-opacity="0.26"/>
+    </filter>
+  </defs>
+  <circle cx="80" cy="80" r="58" fill="url(#leetBg)"/>
+  <g filter="url(#leetShadow)">
+    <rect x="40" y="34" width="80" height="84" rx="22" fill="#FBF9FF"/>
+    <rect x="52" y="48" width="22" height="22" rx="7" fill="#7766E7"/>
+    <path d="M59 59L63 63L68 54" stroke="white" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="84" y="48" width="24" height="10" rx="5" fill="#E7E0FF"/>
+    <rect x="84" y="62" width="18" height="10" rx="5" fill="#E7E0FF"/>
+    <rect x="52" y="82" width="22" height="22" rx="7" fill="#FE748B"/>
+    <path d="M59 93L63 97L68 88" stroke="white" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="84" y="82" width="24" height="10" rx="5" fill="#E7E0FF"/>
+    <rect x="84" y="96" width="18" height="10" rx="5" fill="#E7E0FF"/>
+  </g>
+</svg>

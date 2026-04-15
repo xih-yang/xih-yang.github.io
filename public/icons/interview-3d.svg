@@ -1,0 +1,22 @@
+<svg width="160" height="160" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="interviewBg" x1="24" y1="22" x2="136" y2="142" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFF1F5"/>
+      <stop offset="1" stop-color="#FFD2DD"/>
+    </linearGradient>
+    <filter id="interviewShadow" x="10" y="16" width="140" height="132" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="12" stdDeviation="12" flood-color="#FE748B" flood-opacity="0.24"/>
+    </filter>
+  </defs>
+  <circle cx="80" cy="80" r="58" fill="url(#interviewBg)"/>
+  <g filter="url(#interviewShadow)">
+    <rect x="34" y="40" width="44" height="68" rx="20" fill="#FFF7FA"/>
+    <circle cx="56" cy="58" r="10" fill="#7766E7"/>
+    <rect x="47" y="72" width="18" height="22" rx="9" fill="#B8AEFF"/>
+    <rect x="82" y="32" width="44" height="76" rx="20" fill="#FFFFFF"/>
+    <circle cx="104" cy="54" r="12" fill="#FE748B"/>
+    <rect x="94" y="70" width="20" height="26" rx="10" fill="#FF9BAE"/>
+    <path d="M72 76C75.3333 72 79.3333 70 84 70C88.6667 70 92.6667 72 96 76" stroke="#FE748B" stroke-width="5" stroke-linecap="round"/>
+    <rect x="44" y="108" width="76" height="14" rx="7" fill="#7766E7" fill-opacity="0.16"/>
+  </g>
+</svg>

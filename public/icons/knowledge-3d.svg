@@ -1,0 +1,24 @@
+<svg width="160" height="160" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="knowledgeBg" x1="24" y1="20" x2="136" y2="142" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F6F0FF"/>
+      <stop offset="1" stop-color="#D4CAFF"/>
+    </linearGradient>
+    <filter id="knowledgeShadow" x="10" y="14" width="142" height="140" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="12" stdDeviation="12" flood-color="#7766E7" flood-opacity="0.22"/>
+    </filter>
+  </defs>
+  <circle cx="80" cy="80" r="58" fill="url(#knowledgeBg)"/>
+  <g filter="url(#knowledgeShadow)">
+    <path d="M36 44C36 37.3726 41.3726 32 48 32H84V122H48C41.3726 122 36 116.627 36 110V44Z" fill="#FFFFFF"/>
+    <path d="M84 32H112C118.627 32 124 37.3726 124 44V110C124 116.627 118.627 122 112 122H84V32Z" fill="#F7F3FF"/>
+    <path d="M84 32V122" stroke="#B4A7FF" stroke-width="4"/>
+    <rect x="48" y="48" width="24" height="8" rx="4" fill="#D7CFFF"/>
+    <rect x="48" y="64" width="28" height="8" rx="4" fill="#ECE6FF"/>
+    <rect x="92" y="48" width="20" height="8" rx="4" fill="#D7CFFF"/>
+    <rect x="92" y="64" width="18" height="8" rx="4" fill="#ECE6FF"/>
+    <circle cx="104" cy="98" r="16" fill="#7766E7"/>
+    <path d="M104 90V106" stroke="white" stroke-width="6" stroke-linecap="round"/>
+    <path d="M96 98H112" stroke="white" stroke-width="6" stroke-linecap="round"/>
+  </g>
+</svg>
