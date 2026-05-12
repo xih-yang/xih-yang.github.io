@@ -1,0 +1,35 @@
+# 4.8 Proxy 动态代理
+- 来源：https://ddkk.com/zhuanlan/orm/jfinal/40.html
+- 分类：ORM框架
+- 分组：4 AOP
+Proxy 动态代理是 jfinal AOP 的底层实现机制。jfinal 4.0 版本新增了 com.jfinal.proxy 模块用于消除对 cglib/asm 的依赖来实现动态代理。
+
+proxy 模块需要运行在 JDK 环境之下，如果需要运行在 JRE 之下，可以添加如下配置来支持：
+
+```java
+public void configConstant(Constants me) {
+  // 4.6 之前的版本的配置方式: me.setProxyFactory(new CglibProxyFactory());
+  me.setToCglibProxyFactory();  // 4.6 版本新增配置方式
+}
+```
+
+上面的配置将切换到 cglib 对 proxy 模块的实现，需要在 pom.xml 中添加其 maven 依赖：
+
+```xml
+<dependency>
+   <groupId>cglib</groupId>
+   <artifactId>cglib-nodep</artifactId>
+   <version>3.2.5</version>
+</dependency>
+```
+
+如果是在 "非 web 环境" 下使用，配置方法如下：
+
+```java
+// 4.6 之前的版本的配置方式: ProxyManager.me().setProxyFactory(new CglibProxyFactory());
+ProxyManager.me().setToCglibProxyFactory();
+```
+
+> 版权声明：「DDKK.COM 弟弟快看，程序员编程资料站」本站文章，版权归原作者所有
+
+> JFinal 官方 | https://jfinal.com

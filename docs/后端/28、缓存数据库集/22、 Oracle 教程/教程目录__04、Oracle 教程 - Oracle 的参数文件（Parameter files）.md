@@ -1,0 +1,766 @@
+# 04、Oracle 教程 - Oracle 的参数文件（Parameter files）
+- 来源：https://ddkk.com/zhuanlan/db/oracle/1/4.html
+- 分类：缓存数据库
+- 分组：教程目录
+参数文件记录了 Oracle 数据库的基本参数信息，包括数据库名、控制文件所在路径等。参数文件也是 Oracle 数据库较为重要的一种文件结构。
+
+## 一、参数文件的分类
+
+（1）spfile（Server Parameter File）：服务器参数文件，文件格式为二进制格式，不能使用文本编辑器修改，可以使用 alter system 命令修改文件中的参数值，可以使用 strings 命令查看其内容。spfile 参数文件的默认名称为：spfile.ora，文件路径为：$ORACLE_HOME/dbs。
+
+（2）pfile（Initialization Parameters File）： 初始化参数文件，文件格式为文本格式，可以使用文本编辑器修改其中的参数内容。pfile 默认的名称为：init.ora，文件路径为：$ORACLE_HOME/dbs。
+
+（3）Oracle 实例启动时查找参数文件的顺序：Oracle 首先在默认目录中查找名为 spfile.ora的文件，如果没有则查找spfile.ora 文件，如果还没有，继续查找 init.ora 文件。
+
+Oracle 数据库根据 SPFILE 或 PFILE 中设置的参数来配置数据库的启动。Oracle 实例在启动时，会去读取参数文件中的配置：数据库的 startup 命令中可以指定以哪个 pfile 来启动（startup 命令只能指定 pfile，不 能指定 spfile）。如果使用不带 pfile 子句的 startup 命令，Oracle 将从默认位置的 spfile 文件中读取初始化参数。
+
+查看启动实例时所使用的参数文件：
+
+```java
+SQL> SELECT INST_ID,NAME,VALUE FROM GV$PARAMETER WHERE NAME LIKE '%pfile%';
+   INST_ID NAME 			  VALUE
+---------- ------------------------------ --------------------------------------------------
+	 2 spfile			  +DATA/orcl/spfileorcl.ora
+	 1 spfile			  +DATA/orcl/spfileorcl.ora
+SQL> show parameter pfile
+NAME				     TYPE	 VALUE
+------------------------------------ ----------- ------------------------------
+spfile				     string	 +DATA/orcl/spfileorcl.ora
+-- 可以看出 oracle 启动实例时使用的是 spfile 参数文件
+```
+
+## 二、Oracle 参数的分类
+
+根据参数的生效时间，Oracle 参数可以分为两类：静态参数和动态参数。
+
+动态参数：可以在数据库运行时修改参数值并且立即生效的参数。
+
+静态参数：内存中的当前值不能被修改，只能在参数文件中修改，且数据库必须要重启才能生效的参数。
+
+Oracle 在视图 V$PARAMETER 中提供了一个列 ISSYS_MODIFIABLE，如果该列的值为 IMMEDIATE 代表该参数为动态参数，且修改后立即生效；如果该列的值为 DEFERRED 代表该参数为动态参数，但参数值修改后不会立即生效，只有在新连接的会话中生效；如果该列的值为 FALSE 代表该参数为静态参数。
+
+## 三、查看 Oracle 参数
+
+查询Oracle 参数的方法如下：
+
+### 1、使用 show parameters 命令
+
+该命令可以查询当前会话生效的参数。
+
+```java
+SQL>  show parameter name
+NAME				     TYPE	 VALUE
+------------------------------------ ----------- ------------------------------
+cell_offloadgroup_name		     string
+db_file_name_convert		     string
+db_name 			             string	 	orcl
+db_unique_name			         string	 	orcl
+global_names			         boolean	FALSE
+instance_name			         string	 	orcl2
+lock_name_space 		         string
+log_file_name_convert		     string
+processor_group_name		     string
+service_names			         string	 	orcl
+```
+
+### 2、使用 show spparameters 命令
+
+该命令可以查询当前会话生效的 spfile 参数，参数的取值来源于 spfile 参数文件。
+
+```java
+SQL> show spparameter name
+SID	 NAME			       TYPE	   VALUE
+-------- ----------------------------- ----------- ----------------------------
+*	 cell_offloadgroup_name        string
+*	 db_file_name_convert	       string
+*	 db_name		               string	   orcl
+*	 db_unique_name 	           string	   orcl
+*	 global_names		           boolean
+*	 instance_name		           string
+*	 lock_name_space	           string
+*	 log_file_name_convert	       string
+*	 processor_group_name	       string
+*	 service_names		           string
+```
+
+### 3、使用 create pfile 命令
+
+此方法可以将 spfile 或当前内存中设置的参数保存到 pfile 文件中，pfile 文件是文本文件，可以直接打开进行查看。这种方法列出的参数都是用户设置的参数，不包括默认值参数。
+
+```java
+-- 将 spfile 参数文件中设置的参数保存到 pfile 文件 aaa.ora 中
+SQL> create pfile = '/home/oracle/aaa.ora' from spfile;
+File created.
+-- 将当前内存中设置的参数保存到 pfile 文件 bbb.ora 中
+SQL> create pfile = '/home/oracle/bbb.ora' from memory;
+File created.
+```
+
+文件aaa.ora 的内容如下：
+
+```java
+[oracle@rac1 ~]$ cat aaa.ora 
+orcl2.__db_cache_size=289406976
+orcl1.__db_cache_size=306184192
+orcl1.__java_pool_size=4194304
+orcl2.__java_pool_size=4194304
+orcl1.__large_pool_size=8388608
+orcl2.__large_pool_size=8388608
+orcl1.__oracle_base='/u01/app/oracle'#ORACLE_BASE set from environment
+orcl2.__oracle_base='/u01/app/oracle'#ORACLE_BASE set from environment
+orcl1.__pga_aggregate_target=293601280
+orcl2.__pga_aggregate_target=335544320
+orcl1.__sga_target=545259520
+orcl2.__sga_target=503316480
+orcl1.__shared_io_pool_size=0
+orcl2.__shared_io_pool_size=0
+orcl2.__shared_pool_size=192937984
+orcl1.__shared_pool_size=218103808
+orcl1.__streams_pool_size=0
+orcl2.__streams_pool_size=0
+*.audit_file_dest='/u01/app/oracle/admin/orcl/adump'
+*.audit_trail='db'
+*.cluster_database=true
+*.compatible='11.2.0.4.0'
+*.control_files='+DATA/orcl/controlfile/current.260.1070471991','+BAK/orcl/controlfile/current.256.1070471991'
+*.db_block_size=8192
+*.db_create_file_dest='+DATA'
+*.db_domain=''
+*.db_name='orcl'
+*.db_recovery_file_dest='+BAK'
+*.db_recovery_file_dest_size=4621074432
+*.db_unique_name='orcl'
+*.diagnostic_dest='/u01/app/oracle'
+*.dispatchers='(PROTOCOL=TCP) (SERVICE=orclXDB)'
+orcl2.instance_number=2
+orcl1.instance_number=1
+*.memory_target=838860800
+*.open_cursors=600
+test1.open_cursors=500
+orcl1.open_cursors=200
+orcl2.open_cursors=400
+*.processes=150
+*.remote_listener='rac-scan:1521'
+*.remote_login_passwordfile='exclusive'
+orcl2.thread=2
+orcl1.thread=1
+orcl2.undo_tablespace='UNDOTBS2'
+orcl1.undo_tablespace='UNDOTBS1'
+```
+
+文件bbb.ora 的内容如下：
+
+```java
+[oracle@rac1 ~]$ cat bbb.ora 
+# Oracle init.ora parameter file generated by instance orcl1 on 08/02/2021 03:48:20
+orcl1.__db_cache_size=292M
+orcl2.__db_cache_size=276M
+*.__java_pool_size=4M
+*.__large_pool_size=8M
+*.__oracle_base='/u01/app/oracle' ORACLE_BASE set from environment
+orcl1.__pga_aggregate_target=280M
+orcl2.__pga_aggregate_target=320M
+orcl1.__sga_target=520M
+orcl2.__sga_target=480M
+*.__shared_io_pool_size=0
+orcl1.__shared_pool_size=208M
+orcl2.__shared_pool_size=184M
+*.__streams_pool_size=0
+*._aggregation_optimization_settings=0
+*._always_anti_join='CHOOSE'
+*._always_semi_join='CHOOSE'
+*._and_pruning_enabled=TRUE
+*._b_tree_bitmap_plans=TRUE
+*._bloom_filter_enabled=TRUE
+*._bloom_folding_enabled=TRUE
+*._bloom_pruning_enabled=TRUE
+*._complex_view_merging=TRUE
+*._compression_compatibility='11.2.0.4.0'
+*._connect_by_use_union_all='TRUE'
+*._convert_set_to_join=FALSE
+*._cost_equality_semi_join=TRUE
+*._cpu_to_io=0
+*._dimension_skip_null=TRUE
+*._eliminate_common_subexpr=TRUE
+*._enable_type_dep_selectivity=TRUE
+*._fast_full_scan_enabled=TRUE
+*._first_k_rows_dynamic_proration=TRUE
+*._gby_hash_aggregation_enabled=TRUE
+*._generalized_pruning_enabled=TRUE
+*._globalindex_pnum_filter_enabled=TRUE
+*._gs_anti_semi_join_allowed=TRUE
+*._improved_outerjoin_card=TRUE
+*._improved_row_length_enabled=TRUE
+*._index_join_enabled=TRUE
+*._ksb_restart_policy_times='0'
+*._ksb_restart_policy_times='60'
+*._ksb_restart_policy_times='120'
+*._ksb_restart_policy_times='240' internal update to set default
+*._left_nested_loops_random=TRUE
+*._local_communication_costing_enabled=TRUE
+*._minimal_stats_aggregation=TRUE
+*._mmv_query_rewrite_enabled=TRUE
+*._new_initial_join_orders=TRUE
+*._new_sort_cost_estimate=TRUE
+*._nlj_batching_enabled=1
+*._optim_adjust_for_part_skews=TRUE
+*._optim_enhance_nnull_detection=TRUE
+*._optim_new_default_join_sel=TRUE
+*._optim_peek_user_binds=TRUE
+*._optimizer_adaptive_cursor_sharing=TRUE
+*._optimizer_better_inlist_costing='ALL'
+*._optimizer_cbqt_no_size_restriction=TRUE
+*._optimizer_coalesce_subqueries=TRUE
+*._optimizer_complex_pred_selectivity=TRUE
+*._optimizer_compute_index_stats=TRUE
+*._optimizer_connect_by_combine_sw=TRUE
+*._optimizer_connect_by_cost_based=TRUE
+*._optimizer_connect_by_elim_dups=TRUE
+*._optimizer_correct_sq_selectivity=TRUE
+*._optimizer_cost_based_transformation='LINEAR'
+*._optimizer_cost_hjsmj_multimatch=TRUE
+*._optimizer_cost_model='CHOOSE'
+*._optimizer_dim_subq_join_sel=TRUE
+*._optimizer_distinct_agg_transform=TRUE
+*._optimizer_distinct_elimination=TRUE
+*._optimizer_distinct_placement=TRUE
+*._optimizer_eliminate_filtering_join=TRUE
+*._optimizer_enable_density_improvements=TRUE
+*._optimizer_enable_extended_stats=TRUE
+*._optimizer_enable_table_lookup_by_nl=TRUE
+*._optimizer_enhanced_filter_push=TRUE
+*._optimizer_extend_jppd_view_types=TRUE
+*._optimizer_extended_cursor_sharing='UDO'
+*._optimizer_extended_cursor_sharing_rel='SIMPLE'
+*._optimizer_extended_stats_usage_control=192
+*._optimizer_false_filter_pred_pullup=TRUE
+*._optimizer_fast_access_pred_analysis=TRUE
+*._optimizer_fast_pred_transitivity=TRUE
+*._optimizer_filter_pred_pullup=TRUE
+*._optimizer_fkr_index_cost_bias=10
+*._optimizer_full_outer_join_to_outer=TRUE
+*._optimizer_group_by_placement=TRUE
+*._optimizer_improve_selectivity=TRUE
+*._optimizer_interleave_jppd=TRUE
+*._optimizer_join_elimination_enabled=TRUE
+*._optimizer_join_factorization=TRUE
+*._optimizer_join_order_control=3
+*._optimizer_join_sel_sanity_check=TRUE
+*._optimizer_max_permutations=2000
+*._optimizer_mode_force=TRUE
+*._optimizer_multi_level_push_pred=TRUE
+*._optimizer_native_full_outer_join='FORCE'
+*._optimizer_new_join_card_computation=TRUE
+*._optimizer_null_aware_antijoin=TRUE
+*._optimizer_or_expansion='DEPTH'
+*._optimizer_order_by_elimination_enabled=TRUE
+*._optimizer_outer_join_to_inner=TRUE
+*._optimizer_outer_to_anti_enabled=TRUE
+*._optimizer_push_down_distinct=0
+*._optimizer_push_pred_cost_based=TRUE
+*._optimizer_rownum_bind_default=10
+*._optimizer_rownum_pred_based_fkr=TRUE
+*._optimizer_skip_scan_enabled=TRUE
+*._optimizer_sortmerge_join_inequality=TRUE
+*._optimizer_squ_bottomup=TRUE
+*._optimizer_star_tran_in_with_clause=TRUE
+*._optimizer_system_stats_usage=TRUE
+*._optimizer_table_expansion=TRUE
+*._optimizer_transitivity_retain=TRUE
+*._optimizer_try_st_before_jppd=TRUE
+*._optimizer_undo_cost_change='11.2.0.4'
+*._optimizer_unnest_corr_set_subq=TRUE
+*._optimizer_unnest_disjunctive_subq=TRUE
+*._optimizer_use_cbqt_star_transformation=TRUE
+*._optimizer_use_feedback=TRUE
+*._or_expand_nvl_predicate=TRUE
+*._ordered_nested_loop=TRUE
+*._parallel_broadcast_enabled=TRUE
+*._partition_view_enabled=TRUE
+*._pivot_implementation_method='CHOOSE'
+*._pre_rewrite_push_pred=TRUE
+*._pred_move_around=TRUE
+*._push_join_predicate=TRUE
+*._push_join_union_view=TRUE
+*._push_join_union_view2=TRUE
+*._px_minus_intersect=TRUE
+*._px_partition_scan_enabled=TRUE
+*._px_pwg_enabled=TRUE
+*._px_ual_serial_input=TRUE
+*._query_rewrite_setopgrw_enable=TRUE
+*._remove_aggr_subquery=TRUE
+*._replace_virtual_columns=TRUE
+*._resource_manager_plan=''
+*._right_outer_hash_enable=TRUE
+*._selfjoin_mv_duplicates=TRUE
+*._sql_model_unfold_forloops='RUN_TIME'
+*._sqltune_category_parsed='DEFAULT' parsed sqltune_category
+*._subquery_pruning_enabled=TRUE
+*._subquery_pruning_mv_enabled=FALSE
+*._table_scan_cost_plus_one=TRUE
+*._union_rewrite_for_gs='YES_GSET_MVS'
+*._unnest_subquery=TRUE
+*._use_column_stats_for_function=TRUE
+*.audit_file_dest='/u01/app/oracle/admin/orcl/adump'
+*.audit_trail='DB'
+orcl1.background_dump_dest='/u01/app/oracle/diag/rdbms/orcl/orcl1/trace'Deprecate parameter
+orcl2.background_dump_dest='/u01/app/oracle/diag/rdbms/orcl/orcl2/trace'Deprecate parameter
+*.cluster_database=TRUE
+*.compatible='11.2.0.4.0'
+*.control_files='+DATA/orcl/controlfile/current.260.1070471991'
+*.control_files='+BAK/orcl/controlfile/current.256.1070471991'
+orcl1.core_dump_dest='/u01/app/oracle/diag/rdbms/orcl/orcl1/cdump'
+orcl2.core_dump_dest='/u01/app/oracle/diag/rdbms/orcl/orcl2/cdump'
+*.db_block_size=8192
+*.db_create_file_dest='+DATA'
+*.db_domain=''
+*.db_name='orcl'
+*.db_recovery_file_dest='+BAK'
+*.db_recovery_file_dest_size=4407M
+*.db_unique_name='orcl'
+*.diagnostic_dest='/u01/app/oracle'
+*.dispatchers='(PROTOCOL=TCP) (SERVICE=orclXDB)'
+orcl1.instance_number=1
+orcl2.instance_number=2
+orcl1.local_listener=' (ADDRESS=(PROTOCOL=TCP)(HOST=192.168.1.101)(PORT=1521))'
+orcl2.local_listener=' (ADDRESS=(PROTOCOL=TCP)(HOST=192.168.1.102)(PORT=1521))'
+*.log_buffer=2199552 log buffer update
+*.memory_target=800M
+orcl1.open_cursors=200
+orcl2.open_cursors=400
+*.optimizer_dynamic_sampling=2
+*.optimizer_mode='ALL_ROWS'
+*.plsql_warnings='DISABLE:ALL' PL/SQL warnings at init.ora
+*.processes=150
+*.query_rewrite_enabled='TRUE'
+*.remote_listener='rac-scan:1521'
+*.remote_login_passwordfile='EXCLUSIVE'
+*.resource_manager_plan=''
+*.result_cache_max_size=2M
+*.skip_unusable_indexes=TRUE
+orcl1.thread=1
+orcl2.thread=2
+orcl1.undo_tablespace='UNDOTBS1'
+orcl2.undo_tablespace='UNDOTBS2'
+orcl1.user_dump_dest='/u01/app/oracle/diag/rdbms/orcl/orcl1/trace'Deprecate parameter
+orcl2.user_dump_dest='/u01/app/oracle/diag/rdbms/orcl/orcl2/trace'Deprecate parameter
+```
+
+### 4、查看 v$parameter 视图
+
+vpa r a m e t e r 视 图 提 供 了 当 前 会 话 可 见 的 初 始 化 参 数 的 取 值 ， 如 果 要 查 询 r a c 数 据 库 的 所 有 实 例 的 设 置 ， 可 以 查 询 g v parameter 视图提供了当前会话可见的初始化参数的取值，如果要查询 rac 数据库的所有实例的设置，可以查询 gv parameter视图提供了当前会话可见的初始化参数的取值，如果要查询rac数据库的所有实例的设置，可以查询gvparameter 视图。
+
+```java
+SQL> select name,value,issys_modifiable from v$parameter where name like 'instance%';
+NAME			       VALUE					ISSYS_MOD
+------------------------------ ---------------------------------------- ---------
+instance_groups 							        FALSE
+instance_type		       RDBMS					FALSE
+instance_number 	       1					    FALSE
+instance_name		       orcl1					FALSE
+SQL> select inst_id,name,value,issys_modifiable from gv$parameter where name like 'instance%';
+   INST_ID NAME 			  VALUE 				   ISSYS_MOD
+---------- ------------------------------ ---------------------------------------- ---------
+	 1 instance_groups							       FALSE
+	 1 instance_type		  RDBMS 				   FALSE
+	 1 instance_number		  1					       FALSE
+	 1 instance_name		  orcl1 				   FALSE
+	 2 instance_groups							       FALSE
+	 2 instance_type		  RDBMS 				   FALSE
+	 2 instance_number		  2					       FALSE
+	 2 instance_name		  orcl2 				   FALSE
+8 rows selected.
+```
+
+### 5、查看 v$system_parameter 视图
+
+vsy s t e m p a r a m e t e r 视 图 提 供 了 当 前 实 例 生 效 的 初 始 化 参 数 的 取 值 ， 如 果 要 查 询 r a c 数 据 库 的 所 有 实 例 的 设 置 ， 可 以 查 询 g v system_parameter 视图提供了当前实例生效的初始化参数的取值，如果要查询 rac 数据库的所有实例的设置，可以查询 gv systemparameter视图提供了当前实例生效的初始化参数的取值，如果要查询rac数据库的所有实例的设置，可以查询gvsystem_parameter 视图。
+
+```java
+SQL> select name,value,issys_modifiable from v$system_parameter where name like 'instance%';
+NAME			       VALUE					ISSYS_MOD
+------------------------------ ---------------------------------------- ---------
+instance_groups 							        FALSE
+instance_type		       RDBMS					FALSE
+instance_number 	       1					    FALSE
+instance_name		       orcl1					FALSE
+SQL> select inst_id,name,value,issys_modifiable from gv$system_parameter where name like 'instance%';
+   INST_ID NAME 			  VALUE 				   ISSYS_MOD
+---------- ------------------------------ ---------------------------------------- ---------
+	 1 instance_groups							       FALSE
+	 1 instance_type		  RDBMS 				   FALSE
+	 1 instance_number		  1					       FALSE
+	 1 instance_name		  orcl1 				   FALSE
+	 2 instance_groups							       FALSE
+	 2 instance_type		  RDBMS 				   FALSE
+	 2 instance_number		  2					       FALSE
+	 2 instance_name		  orcl2 				   FALSE
+8 rows selected.
+```
+
+### 6、查看 v$spparameter 视图
+
+vsp p a r a m e t e r 视 图 提 供 了 来 自 s p f i l e 文 件 中 初 始 化 参 数 的 取 值 ， 如 果 参 数 在 s p f i l e 文 件 中 没 有 设 置 ， 字 段 i s s p e c i f i e d 对 应 的 值 为 f a l s e 。 如 果 要 查 询 r a c 数 据 库 的 所 有 实 例 的 设 置 ， 可 以 查 询 g v spparameter 视图提供了来自 spfile 文件中初始化参数的取值，如果参数在 spfile 文件中没有设置，字段 isspecified 对应的值为 false。如果要查询 rac 数据库的所有实例的设置，可以查询 gv spparameter视图提供了来自spfile文件中初始化参数的取值，如果参数在spfile文件中没有设置，字段isspecified对应的值为false。如果要查询rac数据库的所有实例的设置，可以查询gvspparameter 视图。
+
+```java
+SQL> select name,value from v$spparameter where name like 'instance%';
+NAME			       VALUE
+------------------------------ ----------------------------------------
+instance_groups
+instance_type
+instance_number 	       2
+instance_number 	       1
+instance_name
+SQL> select inst_id,name,value from gv$spparameter where name like 'instance%';
+   INST_ID NAME 			  VALUE
+---------- ------------------------------ ----------------------------------------
+	 1 instance_groups
+	 1 instance_type
+	 1 instance_number		  2
+	 1 instance_number		  1
+	 1 instance_name
+	 2 instance_groups
+	 2 instance_type
+	 2 instance_number		  2
+	 2 instance_number		  1
+	 2 instance_name
+10 rows selected.
+```
+
+### 7、查看 v$spparameter2 视图
+
+vsp p a r a m e t e r 2 和 v spparameter2 和 v spparameter2和vspparameter 视图相似，唯一的区别在于对于包含多值的初始化参数，v s p p a r a m e t e r 2 视 图 会 返 回 多 条 记 录 。 对 于 r a c 环 境 可 以 查 询 g v spparameter2 视图会返回多条记录。对于 rac 环境可以查询 gv spparameter2视图会返回多条记录。对于rac环境可以查询gvspparameter2 视图。
+
+```java
+SQL> select name,value,issys_modifiable from v$parameter where name like '%files%';
+NAME			       VALUE					ISSYS_MOD
+------------------------------ ---------------------------------------- ---------
+filesystemio_options	   none					                          FALSE
+control_files		       +DATA/orcl/controlfile/current.260.1070471991,  FALSE
+			               +BAK/orcl/controlfile/current.256.1070471991
+db_files		          200					                         FALSE
+session_max_open_files	   10					                          FALSE
+SQL> select name,value,issys_modifiable from v$parameter2 where name like '%files%';
+NAME			       VALUE					ISSYS_MOD
+------------------------------ ---------------------------------------- ---------
+filesystemio_options	    none					                      FALSE
+control_files		       +DATA/orcl/controlfile/current.260.1070471991    FALSE
+control_files		       +BAK/orcl/controlfile/current.256.1070471991     FALSE
+db_files		           200					                          FALSE
+session_max_open_files	    10					                           FALSE
+SQL> select inst_id,name,value,issys_modifiable from gv$parameter where name like '%files%';
+   INST_ID NAME 			  VALUE 				   ISSYS_MOD
+---------- ------------------------------ ---------------------------------------- ---------
+	 1 filesystemio_options    none					                         FALSE
+	 1 control_files		  +DATA/orcl/controlfile/current.260.1070471991,  FALSE
+					         +BAK/orcl/controlfile/current.256.1070471991
+	 1 db_files			      200					                        FALSE
+	 1 session_max_open_files  10					                         FALSE
+	 2 filesystemio_options    none					                         FALSE
+	 2 control_files		  +DATA/orcl/controlfile/current.260.1070471991,  FALSE
+					         +BAK/orcl/controlfile/current.256.1070471991
+	 2 db_files			      200					                        FALSE
+	 2 session_max_open_files  10					                         FALSE
+8 rows selected.
+SQL> select inst_id,name,value,issys_modifiable from gv$parameter2 where name like '%files%';
+   INST_ID NAME 			  VALUE 				   ISSYS_MOD
+---------- ------------------------------ ---------------------------------------- ---------
+	 1 filesystemio_options    none					                         FALSE
+	 1 control_files		  +DATA/orcl/controlfile/current.260.1070471991   FALSE
+	 1 control_files		  +BAK/orcl/controlfile/current.256.1070471991    FALSE
+	 1 db_files			      200					                        FALSE
+	 1 session_max_open_files  10					                         FALSE
+	 2 filesystemio_options    none					                         FALSE
+	 2 control_files		  +DATA/orcl/controlfile/current.260.1070471991   FALSE
+	 2 control_files		  +BAK/orcl/controlfile/current.256.1070471991    FALSE
+	 2 db_files			      200					                        FALSE
+	 2 session_max_open_files  10					                         FALSE
+10 rows selected.
+```
+
+### 8、查看非默认值参数
+
+```java
+SQL> select name,value from v$parameter where isdefault <> 'TRUE';
+NAME			             VALUE
+------------------------------ ----------------------------------------
+processes		              150
+spfile			              +DATA/orcl/spfileorcl.ora
+memory_target		          838860800
+control_files		          +DATA/orcl/controlfile/current.260.1070471991,
+			                 +BAK/orcl/controlfile/current.256.1070471991
+db_block_size		          8192
+compatible		              11.2.0.4.0
+cluster_database	           TRUE
+db_create_file_dest	           +DATA
+db_recovery_file_dest	       +BAK
+db_recovery_file_dest_size     4621074432
+thread			              1
+undo_tablespace 	           UNDOTBS1
+instance_number 	           1
+remote_login_passwordfile      EXCLUSIVE
+db_domain
+dispatchers		              (PROTOCOL=TCP) (SERVICE=orclXDB)
+remote_listener 	           rac-scan:1521
+audit_file_dest 	           /u01/app/oracle/admin/orcl/adump
+audit_trail		               DB
+db_name 		               orcl
+db_unique_name		           orcl
+open_cursors		           200
+diagnostic_dest 	           /u01/app/oracle
+23 rows selected.
+```
+
+## 四、设置 Oracle 参数的值
+
+初始化参数的设置方法有以下几种：
+
+```java
+-- 值修改内存中的值
+ALTER SYSTEM/SESSION SET 参数名=参数值 SCOPE = MEMORY SID='*';
+-- 只修改 SPFILE 中的值
+ALTER SYSTEM SET 参数名=参数值 SCOPE = SPFILE SID='*';
+-- 同时修改 SPFILE 和 MEMORY 中的值（也可以省略 BOTH 关键词）
+ALTER SYSTEM/SESSION SET 参数名=参数值 SCOPE = BOTH SID='*';
+-- 设置延迟生效，修改只对以后连接到数据库的会话生效，而对当前会话以及其它已经连接到 Oracle 的会话不会生效。
+ALTER SYSTEM SET 参数名=参数值 DEFERRED SCOPE = SPFILE  SID='*';
+/*
+说明：
+（1）在 RAC 环境中，要修改所有实例，可以在 ALTER SYSTEM 的最后加上 SID='*'，要更改某一个实例， 在命令的结尾加上 SID='实例名'
+（2）ALTER SESSION：修改的参数只限于本次会话，退出会话再进入时修改失效
+（3）ALTER SYSTEM：修改的参数适用于数据库实例的所有会话，数据库关闭则修改失效
+（4）ALTER SYSTEM DEFERRED：修改是延迟修改，退出会话，下次进入会话时生效
+（5）scope = spfile：修改只对 spfile 参数文件有效，对于动态参数和静态参数都是数据库重启时有效。
+（6）scope = memory：修改只对内存有效，对于动态参数修改后立即生效，数据库重启后失效。静态参数不允许使用该选项。
+（7）scope = both：修改对 spfile 参数文件和内存都生效。对于动态参数修改后立即生效，数据库重启后失效。静态参数不允许使用该选项。
+*/
+```
+
+### 1、动态参数修改举例
+
+```java
+-- 动态参数 open_cursors 在内存中的取值
+SQL> show parameter open_cursor
+NAME				     TYPE	 VALUE
+------------------------------------ ----------- ------------------------------
+open_cursors			     integer	 200
+-- 动态参数 open_cursors 在 spfile 参数文件中的取值
+SQL> show spparameter open_cursors
+SID	 NAME			       TYPE	   VALUE
+-------- ----------------------------- ----------- ----------------------------
+orcl1	 open_cursors		       integer	   200
+orcl2	 open_cursors		       integer	   400
+*	     open_cursors		       integer	   600
+-- 只修改内存值
+SQL> alter system set open_cursors = 250 scope = memory;
+System altered.
+SQL> show parameter open_cursors
+NAME				     TYPE	 VALUE
+------------------------------------ ----------- ------------------------------
+open_cursors			     integer	 250
+SQL> show spparameter open_cursors
+SID	 NAME			       TYPE	   VALUE
+-------- ----------------------------- ----------- ----------------------------
+orcl1	 open_cursors		       integer	   200
+orcl2	 open_cursors		       integer	   400
+*	     open_cursors		       integer	   600
+-- 只修改参数文件中的值
+SQL> alter system set open_cursors = 350 scope = spfile;
+System altered.
+SQL> show parameter open_cursors
+NAME				     TYPE	 VALUE
+------------------------------------ ----------- ------------------------------
+open_cursors			     integer	 250
+SQL> show spparameter open_cursors
+SID	 NAME			       TYPE	   VALUE
+-------- ----------------------------- ----------- ----------------------------
+orcl1	 open_cursors		       integer	   200
+*	     open_cursors		       integer	   350
+orcl2	 open_cursors		       integer	   400
+-- 同时修改内存和参数文件的取值
+SQL> alter system set open_cursors = 550 scope = both;
+System altered.
+SQL> show parameter open_cursors
+NAME				     TYPE	 VALUE
+------------------------------------ ----------- ------------------------------
+open_cursors			     integer	 550
+SQL> show spparameter open_cursors
+SID	 NAME			       TYPE	   VALUE
+-------- ----------------------------- ----------- ----------------------------
+orcl1	 open_cursors		       integer	   200
+orcl2	 open_cursors		       integer	   400
+*	     open_cursors		       integer	   550
+```
+
+### 2、静态参数修改举例
+
+```java
+-- 静态参数 db_unique_name 的取值
+SQL> show parameter db_unique_name
+NAME				     TYPE	 VALUE
+------------------------------------ ----------- ------------------------------
+db_unique_name			 string	 orcl
+-- 静态参数的内存值不允许修改
+SQL> alter system set db_unique_name = 'mydb' scope = memory sid = '*';
+alter system set db_unique_name = 'mydb' scope = memory sid = '*'
+                 *
+ERROR at line 1:
+ORA-02095: specified initialization parameter cannot be modified
+-- 静态参数的内存值不允许使用 both 选项
+SQL> alter system set db_unique_name = 'mydb' scope = both sid = '*';
+alter system set db_unique_name = 'mydb' scope = both sid = '*'
+                 *
+ERROR at line 1:
+ORA-02095: specified initialization parameter cannot be modified
+-- 静态参数只能在 spfile 参数文件中修改，并且重启数据库才生效
+SQL> alter system set db_unique_name = 'mydb' scope = spfile sid = '*';
+System altered.
+-- 内存中的值没有发生变化
+SQL> show parameter db_unique_name
+NAME				     TYPE	 VALUE
+------------------------------------ ----------- ------------------------------
+db_unique_name			     string	 orcl
+SQL> show spparameter db_unique_name
+SID	 NAME			       TYPE	   VALUE
+-------- ----------------------------- ----------- ----------------------------
+*	 db_unique_name 	       string	   mydb
+-- 重启数据库（静态参数修改后必须重启数据库才能生效）
+[oracle@rac1 ~]$ srvctl stop database -d orcl
+[oracle@rac1 ~]$ srvctl start database -d orcl
+-- 内存中已更改
+SQL> show parameter db_unique_name
+NAME				     TYPE	 VALUE
+------------------------------------ ----------- ------------------------------
+db_unique_name			     string	 mydb
+SQL> show spparameter db_unique_name
+SID	 NAME			       TYPE	   VALUE
+-------- ----------------------------- ----------- ----------------------------
+*	 db_unique_name 	       string	   mydb
+```
+
+### 3、rac 环境下参数值的设置与查看
+
+```java
+-- 使用 SHOW PARAMETER 查询，看到的是当前会话的初始化参数
+-- 查看当前连接的实例名
+SQL> show parameter instance_name
+NAME				     TYPE	 VALUE
+------------------------------------ ----------- ------------------------------
+instance_name			     string	 orcl2
+-- 修改实例 orcl1 的 open_cursors 参数值
+SQL> alter system set open_cursors = 220 scope = both sid = 'orcl1';
+System altered.
+SQL> alter system set open_cursors = 320 scope = both sid = 'orcl2';
+System altered.
+-- 查看当前实例的 open_cursors 参数值
+SQL> select name,value from v$parameter where name like 'open_cursors';
+NAME						   VALUE
+-------------------------------------------------- ----------------------------------------
+open_cursors					   320
+-- 查看所有实例的 open_cursors 参数值（好像有问题！！！，看不到 2 号实例的参数值）
+SQL> select inst_id,name,value from gv$parameter where name like 'open_cursors';
+   INST_ID NAME 					      VALUE
+---------- -------------------------------------------------- --------------------------
+	 2 open_cursors 				      320
+	 1 open_cursors 				      220
+-- 节点1
+SQL> show parameter open_cursors
+NAME				     TYPE	 VALUE
+------------------------------------ ----------- ------------------------------
+open_cursors			     integer	 220
+-- 节点2
+SQL> show parameter open_cursors
+NAME				     TYPE	 VALUE
+------------------------------------ ----------- ------------------------------
+open_cursors			     integer	 320
+-- 参数文件中的取值
+SQL> select sid,name,value from v$spparameter where name like 'open_cursors';
+SID	   NAME 			  VALUE
+---------- ------------------------------ ----------------------------------------
+*	       open_cursors 		  550
+orcl1	   open_cursors 		  220
+orcl2	   open_cursors 		  320
+-- 使用 sid = '*' 修改
+SQL> alter system set open_cursors = 500 scope = both sid = '*';
+System altered.
+-- 查看结果
+-- 节点1
+SQL> show parameter open_cursors
+NAME				     TYPE	 VALUE
+------------------------------------ ----------- ------------------------------
+open_cursors			     integer	 500
+-- 节点2
+SQL> show parameter open_cursors
+NAME				     TYPE	 VALUE
+------------------------------------ ----------- ------------------------------
+open_cursors			     integer	 500
+-- 参数文件
+SQL> show spparameter open_cursors
+SID	 NAME			       TYPE	   VALUE
+-------- ----------------------------- ----------- ----------------------------
+orcl1	 open_cursors		       integer	   220
+orcl2	 open_cursors		       integer	   320
+*	     open_cursors		       integer	   500
+```
+
+## 五、pfile 和 spfile 的互相创建
+
+```java
+-- 根据 spfile 创建 pfile
+create pfile[='xxxxx'] from spfile[='xxxx'];
+-- 根据内存中的参数值创建 pfile
+create pfile[='xxxxx'] from memory;
+-- 根据 pfile 创建 spfile
+create spfile[='xxxxx'] from pfile[='xxxx'];
+```
+
+举例：
+
+```java
+SQL> create pfile = '/home/oracle/pfile001.ora' from spfile;
+File created.
+SQL> create pfile = '/home/oracle/pfilefrommemory.ora' from memory;
+File created.
+[oracle@rac1 ~]$ pwd
+/home/oracle
+[oracle@rac1 ~]$ ll
+total 12
+-rw-r--r-- 1 oracle asmadmin 1475 Aug  2 04:56 pfile001.ora
+-rw-r--r-- 1 oracle asmadmin 7042 Aug  2 04:57 pfilefrommemory.ora
+```
+
+## 六、使用 pfile 启动实例
+
+使用指定的 pfile 启动实例命令如下：
+
+```java
+startup pfile = '/home/oracle/pfile001.ora';
+```
+
+使用指定的 spfile 启动实例：需要使用 pfile 做桥梁，在 pfile 中使用指针指向非默认路径下的 spfile，命令如下：
+
+```java
+# 使用 pfile 生成 spfile 文件
+create spfile = '/home/oracle/spfile.ora' from pfile = '/home/oracle/pfile001.ora'
+# 编辑 pfile 文件，添加指向 spfile 文件的指针
+vi /home/oracle/init.ora
+# pfile 内容如下：
+spfile = '/home/oracle/spfile.ora'
+# 使用 pfile 文件启动数据库
+startup pfile = '/home/oracle/pfile001.ora'
+```
+
+使用pfile 文件启动的实例具有如下特点：
+
+```java
+----------------------------------------------------------------------------------
+-- 对动态参数的修改
+----------------------------------------------------------------------------------
+-- 不能使用 scope 选项，不使用 scope 选项默认修改动态参数在内存中的取值
+-- 要修改动态参数在参数文件中的取值，直接使用 vi 编辑器修改 pfile 文件即可
+alter system set open_cursor=500;
+----------------------------------------------------------------------------------
+-- 对静态参数的修改
+----------------------------------------------------------------------------------
+-- 静态参数不能使用 alter system 命令修改，使用 vi 直接修改 pfile 文件
+```

@@ -1,0 +1,7 @@
+# 处理器异常解析器HandlerExceptionHandler
+- 来源：https://ddkk.com/zhuanlan/j2ee/springmvc/1/43.html
+- 分类：J2EE框架
+- 分组：11、异常处理
+Spring的处理器异常解析器HandlerExceptionResolver接口的实现负责处理各类控制器执行过程中出现的异常。某种程度上讲，HandlerExceptionResolver与你在web应用描述符web.xml文件中能定义的异常映射（exception mapping）很相像，不过它比后者提供了更灵活的方式。比如它能提供异常被抛出时正在执行的是哪个处理器这样的信息。并且，一个更灵活（programmatic）的异常处理方式可以为你提供更多选择，使你在请求被直接转向到另一个URL之前（与你使用Servlet规范的异常映射是一样的）有更多的方式来处理异常。
+
+实现HandlerExceptionResolver接口并非实现异常处理的唯一方式，它只是提供了resolveException(Exception, Hanlder)方法的一个实现而已，方法会返回一个ModelAndView。除此之外，你还可以框架提供的SimpleMappingExceptionResolver或在异常处理方法上注解@ExceptionHandler。SimpleMappingExceptionResolver允许你获取可能抛出的异常类的名字，并把它映射到一个视图名上去。这与Servlet API提供的异常映射特性是功能等价的，但你也可以基于此实现粒度更精细的异常映射。而@ExceptionHandler注解的方法则会在异常抛出时被调用以处理该异常。这样的方法可以定义在@Controller注解的控制器类里，也可以定义在@ControllerAdvice类中，后者可以使该异常处理方法被应用到更多的@Controller控制器中。下一小节将提供更为详细的信息。

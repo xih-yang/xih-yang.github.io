@@ -1,0 +1,77 @@
+# 01、Quartz 执行流程简介
+- 来源：https://ddkk.com/zhuanlan/job/quartz/1/7.html
+- 分类：作业调度
+- 分组：Quartz 教程（版本 B）
+入职以来负责定时任务相关的业务，其底层用的是quartz框架。本篇就先简述一下quartz的执行逻辑。
+
+## 执行逻辑叙述
+
+quartz是通过一个调度线程不断的扫描数据库中的数据来获取到那些已经到点要触发的任务，然后调度执行它的。这个线程就是QuartzSchedulerThread类。其run方法中就是quartz的调度逻辑。
+
+**2.1获取触发器(Triggers)**
+
+run方法中首先会判断quartz框架的线程池是否有可用的线程且没有被暂停，如果没暂停且有可用线程则去获取那些将要到点触发的触发器。触发器的信息存储在qrtz_triggers表中，获取触发器的逻辑在JobStoreSupport类中，其对应的方法中就是查询qrtz_triggers表。注：JobStoreSupport中基本都是和数据库操作相关的方法。
+
+acquireNextTriggers方法就是获取将要触发的触发器的方法，接下来看一下这个方法干了点啥。
+
+执行了一个最多三次的循环，每次循环首先去查询表qrtz_triggers的数据，即通过selectTriggerToAcquire方法去查表，执行的sql语句如下：
+
+TABLE_PREFIX_SUBST是表前缀，也就是QRTZ_，TABLE_TRIGGERS是表名，也就是TRIGGERS。SCHED_NAME_SUBST是内置的quartz的SCHED的名称，即QuartzScheduler。COL_开头的是对应的列名，其值为去掉COL_前缀的后部分。
+
+selectTriggerToAcquire方法的参数和sql中的参数设置如下：
+
+除去数据库连接Connection，另外三个参数的含义分别是trigger的nextFireTime不迟于的时间，不早于的时间和查询结果的最大值，兜底值是1。quartz做了处理，最少返回一个trigger。所以该方法干的事就是去查询qrtz_triggers表中trigger_state的值是WAITING，nextFireTime的值在参数区间中的指定数目的trigger。
+
+**2.1触发触发器(Fire Triggers)**
+
+到上面为止quartz已经获取到了将要触发的触发器，但是还没有真正的去触发它。下面继续看quartz如何去触发这些触发器。回到QuartzSchedulerThread方法中继续向下：
+
+可以看到quartz并没有立即触发上面那一步获取到的触发器，因为这些触发器是将要触发的，其nextFireTime的值是在一个给定区间内的，可能还没有到点，只是接近到要触发的时间了。所以quartz这里做了等待的操作，如果trigger的nextFireTime比当前时间大2ms则循环等待。timeUntilTrigger就是nextFireTime和当前时间之间的差值，它在循环中不断更新，直到它的值非常小了，之后才继续向下到真正的触发逻辑。
+
+触发时通过triggersFired方法完成，不用多说，该方法的具体实现逻辑也是在JobStoreSupport类中，一起看一下这个方法干了点啥：
+
+可以看到是通过triggerFired方法获取到每一个trigger的TriggerFiredResult装配成一个list返回。triggerFired方法中首先检验一次触发器的状态：
+
+接着去获取到该触发器对应的quartz的job的实例：
+
+retrieveJob方法中是查表操作，只是查的是qrtz_job_details表：
+
+执行的sql语句如下：
+
+所以说retrieveJob方法传入了数据连接和trigger的jobkey两个参数，去QRTZ_JOB_DETAILS表中去查询jobkey对应的记录。该表的主键是组合主键由SCHEDULER_NAME,JOB_NAME,JOB_GROUP组成，其中SCHEDULER_NAME的值已知，参数又传入了jobkey，其中有jobName和jobGroup的值，所以可以唯一确定一行记录。
+
+已经获取到了trigger对应的job的实例，那么继续刚才的triggersFired方法继续向下：
+
+该方法是把触发器的状态更新为EXECUTING，是对QRTZ_TRIGGERS表操作的。紧接着：
+
+trigger.triggered方法是去QRTZ_TRIGGERS表更新该trigger的nextFireTime和preFireTime的值。
+
+isConcurrentExectionDisallowed方法是判断是否允许job并发执行，如果不允许，则需要把当前QRTZ_TRIGGERS表中TRIGGER_STATE的值为WAITING,ACQUIRED,PAUSED的trigger的该列的值改为BLOCKED。然后需要更新trigger。
+
+如果nextFireTime为null，说明没有下一次触发了，本次就是最后一次执行，则该任务已经完成，state为complete，storeTrigger方法这里用于更新trigger，也可用于插入trigger。
+
+当然最后别忘了需要返回fire的结果即一个TriggerFiredResult实例，这里返回的是一个TriggerFiredBundle实例：
+
+TriggerTriggerBundle构造方法各个参数的含义如上图，这里要注意的是由于调用过trigger.triggered方法，当前trigger的nextFireTime和preFireTime已经更新过了，本次的scheduledFireTime已经变成了trigger的preFireTime。TriggerFiredResult中只有一个属性，就是一个TriggerFiredBundle实例，所以由它构造一个TriggerFiredResult实例向上面的调用方法返回。
+
+OK，到这里逻辑上的触发已经完成了，但是还是没有执行job，所以让我们继续QuartzSchedulerThread中的run方法向下看
+
+**2.3执行job**
+
+根据拿到的TriggerFiredResult实例去判断要做什么操作，如果TriggerFiredBundle为null，则释放当前acquire的trigger：
+
+在第一步获取trigger的时候，waiting状态的触发器在被获取后状态会变为acquired，而在第二步逻辑触发的时候，由于可能不支持job的并发执行，acquired的触发器的状态又有变成blocked的可能，所以该releaseAcquiredTrigger方法是操作QRTZ_TRIGGERS表，把acquired和blocked的触发器的状态都改为waiting，由于第二步逻辑触发的时候，已经判断了是最后一次触发的状态会变成complete，所以这里不用担心完成的trigger的状态被置为waiting，继续执行。
+
+最后就是执行job的逻辑了：
+
+JobRunShell实例中包含了job自身的信息和执行中需要的信息，qs是调度器实例。qsRsrcs是该QuartzSchedulerThread的一个属性，是其资源的集合，通过其线程池去执行该JobRunShell实例。通过调用getThreadPool().runInThread方法实现。
+
+**2.4收尾工作**
+
+可以看到在run方法最外层的while循环的最后quartz做了等待操作，改thread会等待now加上一个随机等待时间再减去now这么长的时间再继续去扫描一遍QRTZ_TRIGGERS表。isScheduleChanged方法的作用注释已经说得很明确了。
+
+## 3.总结
+
+quartz执行定时任务靠的就是一个每个一段时间去扫描QRTZ_TRIGGERS表的线程来获取那些将要触发的triggers，然后对这些triggers的状态等数据进行更新，最后都没有问题则交付给线程池去执行，具体什么时候执行quartz就不管了，交给操作系统去调度了。所以说并发执行这些定时任务时，具体的执行顺序quartz也掌控不了，线程池中线程的调度最终是交由操作系统来完成的。
+
+> 版权声明：「DDKK.COM 弟弟快看，程序员编程资料站」本站文章，版权归原作者所有

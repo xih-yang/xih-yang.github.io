@@ -1,0 +1,118 @@
+# 3、Scala 教程： 安装
+- 来源：https://ddkk.com/zhuanlan/java/scala/3.html
+- 分类：Scala 教程
+- 分组：教程目录
+Scala 语言可以运行在Window、Linux、Unix、 Mac OS X等系统上。
+
+Scala是基于java之上，大量使用java的类库和变量，必须使用Scala之前必须先安装 Java（>1.5版本）
+
+## Mac OS X 和 Linux 上安装 Scala
+
+### 第一步：Java 设置
+
+确保你本地以及安装了 JDK 1.5 以上版本，并且设置了 JAVA_HOME 环境变量及 JDK 的bin目录。
+
+我们可以使用以下命令查看是否安装了 Java：
+
+```java
+$ java -version
+ava version "1.8.0_101"
+Java(TM) SE Runtime Environment (build 1.8.0_101-b13)
+Java HotSpot(TM) 64-Bit Server VM (build 25.101-b13, mixed mode)
+$
+```
+
+接着，我们可以查看是否安装了 Java 编译器。输入以下命令查看：
+
+```java
+$ javac -version
+javac 1.8.0_101
+$
+```
+
+如果还为安装，可以参考我们的 Java 开发环境配置
+
+接下来，我们可以从 Scala 官网地址(http://www.scala-lang.org/downloads)下载 Scala 二进制包，本教程我们将下载 *2.12.3* 版本，如下图所示：
+
+解压缩文件包，可将其移动至/usr/local/share下：
+
+```java
+mv scala-2.12.3 scala                   # 重命名 Scala 目录
+mv /download/scalapath /usr/local/share # 下载目录需要按你实际的下载路径
+```
+
+修改环境变量，如果不是管理员可使用 sudo 进入管理员权限，修改配置文件profile:
+
+```java
+vim /etc/profile
+```
+
+或
+
+```java
+sudo vim /etc/profile
+```
+
+在文件的末尾加入:
+
+```java
+export PATH="$PATH:/usr/local/share/scala/bin"
+```
+
+:wq!保存退出，重启终端，执行 scala 命令，输出以下信息，表示安装成功：
+
+```java
+$ scala
+Welcome to Scala 2.12.3 (Java HotSpot(TM) 64-Bit Server VM, Java 1.8.0_101).
+Type in expressions for evaluation. Or try :help.
+```
+
+> 注意： 在编译的时候，如果有中文会出现乱码现象，解决方法查看：Scala 中文乱码解决)
+
+## window 上安装 Scala
+
+### 第一步：Java 设置
+
+检测方法前文已说明，这里不再描述。
+
+如果还为安装，可以参考我们的Java 开发环境配置)。
+
+接下来，我们可以从 Scala 官网地址 (http://www.scala-lang.org/downloads)下载 Scala 二进制包(页面底部)，本教程我们将下载 *2.12.3* 版本，如下图所示：
+
+下载后，双击 msi 文件，一步步安装即可，安装过程你可以使用默认的安装目录。
+
+安装好scala后，系统会自动提示，单击 finish，完成安装。
+
+右击我的电脑，单击”属性”，进入如图所示页面。下面开始配置环境变量，右击【我的电脑】–【属性】–【高级系统设置】–【环境变量】，如图：
+
+设置SCALA_HOME 变量：单击新建，在变量名栏输入： **SCALA_HOME** : 变量值一栏输入： **D:\Program Files\scala** 也就是scala的安装目录，根据个人情况有所不同，如果安装在C盘，将”D”改成”C”即可。
+
+设置Path 变量：找到系统变量下的”Path”如图，单击编辑。在”变量值”一栏的最前面添加如下的路径： %SCALA_HOME%\bin;%SCALA_HOME%\jre\bin;
+
+**注意：** 后面的分号 **；** 不要漏掉。
+
+设置Classpath 变量：找到找到系统变量下的”Classpath”如图，单击编辑，如没有，则单击”新建”: – “变量名”：ClassPath – “变量值”：.;%SCALA_HOME%\bin;%SCALA_HOME%\lib\dt.jar;%SCALA_HOME%\lib\tools.jar.;
+
+**注意：** “变量值”最前面的 .; 不要漏掉。最后单击确定即可。
+
+检查环境变量是否设置好了：调出”cmd”检查。单击 【开始】，在输入框中输入cmd，然后”回车”，输入 scala，然后回车，如环境变量设置ok，你应该能看到这些信息。
+
+以下列出了不同系统放置的目录（可作为参考）：
+
+系统环境
+变量
+值 (举例)
+
+Unix
+ `$` SCALA_HOME
+/usr/local/share/scala
+
+ `$` PATH
+ `$` PATH: `$` SCALA_HOME/bin
+
+Windows
+%SCALA_HOME%
+c:\Progra~1\Scala
+
+%PATH%
+%PATH%;%SCALA_HOME%\bin

@@ -1,0 +1,31 @@
+# DDKK 抓取结果
+
+- 入口：https://ddkk.com/zhuanlan/db/sqlserver/3/index.html
+- 文章数：26
+
+- [SQL Server 教程 - 阅读指南](./教程目录__SQL Server 教程 - 阅读指南.md)
+- [01、SQL Server 教程 - SQL Server 简介](./教程目录__01、SQL Server 教程 - SQL Server 简介.md)
+- [02、SQL Server 教程 - SQL Server 选择语句](./教程目录__02、SQL Server 教程 - SQL Server 选择语句.md)
+- [03、SQL Server 教程 - SQL Server 插入语句](./教程目录__03、SQL Server 教程 - SQL Server 插入语句.md)
+- [04、SQL Server 教程 - SQL Server 修改语句](./教程目录__04、SQL Server 教程 - SQL Server 修改语句.md)
+- [05、SQL Server 教程 - SQL Server 删除操作](./教程目录__05、SQL Server 教程 - SQL Server 删除操作.md)
+- [06、SQL Server 教程 - SQL Server distinct,and,between and的用法](./教程目录__06、SQL Server 教程 - SQL Server distinct,and,between and的用法.md)
+- [07、SQL Server 教程 - SQL Server alias(别名)的用法](<./教程目录__07、SQL Server 教程 - SQL Server alias(别名)的用法.md>)
+- [08、SQL Server 教程 - SQL Server intersect, minus的用法](./教程目录__08、SQL Server 教程 - SQL Server intersect, minus的用法.md)
+- [09、SQL Server 教程 - SQL Server union, union all 的用法](./教程目录__09、SQL Server 教程 - SQL Server union, union all 的用法.md)
+- [10、SQL Server 教程 - SQL Server in的用法](./教程目录__10、SQL Server 教程 - SQL Server in的用法.md)
+- [11、SQL Server 教程 - SQL Server 触发器的创建](./教程目录__11、SQL Server 教程 - SQL Server 触发器的创建.md)
+- [12、SQL Server 教程 - SQL Server sum函数](./教程目录__12、SQL Server 教程 - SQL Server sum函数.md)
+- [13、SQL Server 教程 - SQL Server avg函数](./教程目录__13、SQL Server 教程 - SQL Server avg函数.md)
+- [14、SQL Server 教程 - SQL Server max,min函数](./教程目录__14、SQL Server 教程 - SQL Server max,min函数.md)
+- [15、SQL Server 教程 - SQL Server count函数](./教程目录__15、SQL Server 教程 - SQL Server count函数.md)
+- [16、SQL Server 教程 - SQL Server 表格，索引，视图的命名规范](./教程目录__16、SQL Server 教程 - SQL Server 表格，索引，视图的命名规范.md)
+- [17、SQL Server 教程 - SQL Server 表格的创建](./教程目录__17、SQL Server 教程 - SQL Server 表格的创建.md)
+- [18、SQL Server 教程 - SQL Server 视图的创建](./教程目录__18、SQL Server 教程 - SQL Server 视图的创建.md)
+- [19、SQL Server 教程 - SQL Server 中索引的创建](./教程目录__19、SQL Server 教程 - SQL Server 中索引的创建.md)
+- [20、SQL Server 教程 - SQL Server 存储过程的创建](./教程目录__20、SQL Server 教程 - SQL Server 存储过程的创建.md)
+- [21、SQL Server 教程 - SQL Server 触发器的创建](./教程目录__21、SQL Server 教程 - SQL Server 触发器的创建.md)
+- [22、SQL Server 教程 - SQL Server Sql server中like的使用](./教程目录__22、SQL Server 教程 - SQL Server Sql server中like的使用.md)
+- [23、SQL Server 教程 - SQL Server substr的使用](./教程目录__23、SQL Server 教程 - SQL Server substr的使用.md)
+- [24、SQL Server 教程 - SQL Server 多表查询](./教程目录__24、SQL Server 教程 - SQL Server 多表查询.md)
+- [25、SQL Server 教程 - SQL Server join的使用方法](./教程目录__25、SQL Server 教程 - SQL Server join的使用方法.md)

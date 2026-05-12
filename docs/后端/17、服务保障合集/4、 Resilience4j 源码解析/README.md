@@ -1,0 +1,30 @@
+# DDKK 抓取结果
+
+- 入口：https://ddkk.com/zhuanlan/guarantee/resilience4j/index.html
+- 文章数：25
+
+- [Resilience4j 源码解析 - 阅读指南](./Resilience4j 源码解析（A）__Resilience4j 源码解析 - 阅读指南.md)
+- [01、Resilience4j 源码解析](./Resilience4j 源码解析（A）__01、Resilience4j 源码解析.md)
+- [02、Resilience4j 源码解析 CircuitBreaker基于注解实现原理](./Resilience4j 源码解析（A）__02、Resilience4j 源码解析 CircuitBreaker基于注解实现原理.md)
+- [03、Resilience4j 源码解析 CircuitBreaker、State、StateTransition、EventPublisher、Metrics](./Resilience4j 源码解析（A）__03、Resilience4j 源码解析 CircuitBreaker、State、StateTransition、EventPublisher、Metrics.md)
+- [04、Resilience4j 源码解析 CircuitBreakerStateMachine](./Resilience4j 源码解析（A）__04、Resilience4j 源码解析 CircuitBreakerStateMachine.md)
+- [05、Resilience4j 源码解析 CircuitBreakerState](./Resilience4j 源码解析（A）__05、Resilience4j 源码解析 CircuitBreakerState.md)
+- [06、Resilience4j 源码解析 CircuitBreakerMetrics](./Resilience4j 源码解析（A）__06、Resilience4j 源码解析 CircuitBreakerMetrics.md)
+- [07、Resilience4j 源码解析 CircuitBreakerEvents](./Resilience4j 源码解析（A）__07、Resilience4j 源码解析 CircuitBreakerEvents.md)
+- [08、Resilience4j 源码解析 RateLimiter内部模块关系](./Resilience4j 源码解析（A）__08、Resilience4j 源码解析 RateLimiter内部模块关系.md)
+- [09、Resilience4j 源码解析 RateLimiter内部模块关系](./Resilience4j 源码解析（A）__09、Resilience4j 源码解析 RateLimiter内部模块关系.md)
+- [10、Resilience4j 源码解析 RateLimiter核心接口实现](./Resilience4j 源码解析（A）__10、Resilience4j 源码解析 RateLimiter核心接口实现.md)
+- [11、Resilience4j 源码解析 Bulkhead源码之Bulkhead基于注解实现原理](./Resilience4j 源码解析（A）__11、Resilience4j 源码解析 Bulkhead源码之Bulkhead基于注解实现原理.md)
+- [12、Resilience4j 源码解析 Bulkhead源码之Bulkhead、SemaphoreBulkhead](./Resilience4j 源码解析（A）__12、Resilience4j 源码解析 Bulkhead源码之Bulkhead、SemaphoreBulkhead.md)
+- [01、Resilience4j源码解析-介绍及环境搭建](./Resilience4j 源码解析（B）__01、Resilience4j源码解析-介绍及环境搭建.md)
+- [02、Resilience4j源码解析-CircuitBreaker模块](./Resilience4j 源码解析（B）__02、Resilience4j源码解析-CircuitBreaker模块.md)
+- [03、Resilience4j源码解析-CircuitBreaker模块之配置](./Resilience4j 源码解析（B）__03、Resilience4j源码解析-CircuitBreaker模块之配置.md)
+- [04、Resilience4j源码解析-CircuitBreaker模块之有限状态机](./Resilience4j 源码解析（B）__04、Resilience4j源码解析-CircuitBreaker模块之有限状态机.md)
+- [05、Resilience4j源码解析-CircuitBreaker模块之有限状态机](./Resilience4j 源码解析（B）__05、Resilience4j源码解析-CircuitBreaker模块之有限状态机.md)
+- [06、Resilience4j源码解析-CircuitBreaker模块之度量指标](./Resilience4j 源码解析（B）__06、Resilience4j源码解析-CircuitBreaker模块之度量指标.md)
+- [07、Resilience4j源码解析-CircuitBreaker模块之事件发布](./Resilience4j 源码解析（B）__07、Resilience4j源码解析-CircuitBreaker模块之事件发布.md)
+- [08、Resilience4j源码解析-CircuitBreaker模块之熔断](./Resilience4j 源码解析（B）__08、Resilience4j源码解析-CircuitBreaker模块之熔断.md)
+- [09、Resilience4j源码解析-CircuitBreaker模块之总结](./Resilience4j 源码解析（B）__09、Resilience4j源码解析-CircuitBreaker模块之总结.md)
+- [10、Resilience4j源码解析-RateLimiter模块介绍及限流算法](./Resilience4j 源码解析（B）__10、Resilience4j源码解析-RateLimiter模块介绍及限流算法.md)
+- [11、Resilience4j源码解析-RateLimiter模块之实现令牌桶限流](./Resilience4j 源码解析（B）__11、Resilience4j源码解析-RateLimiter模块之实现令牌桶限流.md)
+- [12、Resilience4j源码解析-RateLimiter模块之实现固定并发数限流](./Resilience4j 源码解析（B）__12、Resilience4j源码解析-RateLimiter模块之实现固定并发数限流.md)

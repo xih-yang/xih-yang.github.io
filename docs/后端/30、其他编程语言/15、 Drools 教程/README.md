@@ -1,0 +1,30 @@
+# DDKK 抓取结果
+
+- 入口：https://ddkk.com/zhuanlan/other/drools/1/index.html
+- 文章数：25
+
+- [Drools 教程 - 阅读指南](./教程目录__Drools 教程 - 阅读指南.md)
+- [01、Drools 规则引擎 - 介绍](./教程目录__01、Drools 规则引擎 - 介绍.md)
+- [02、Drools 规则引擎 - 入门（上）](./教程目录__02、Drools 规则引擎 - 入门（上）.md)
+- [03、Drools 规则引擎 - 入门（下）测试和评估](./教程目录__03、Drools 规则引擎 - 入门（下）测试和评估.md)
+- [04、Drools 规则引擎 - Drools - 介绍与构建](./教程目录__04、Drools 规则引擎 - Drools - 介绍与构建.md)
+- [05、Drools 规则引擎 - Drools - 部署](./教程目录__05、Drools 规则引擎 - Drools - 部署.md)
+- [06、Drools 规则引擎 - Drools - 运行](./教程目录__06、Drools 规则引擎 - Drools - 运行.md)
+- [07、Drools 规则引擎 - Drools - 构建，部署和应用实例](./教程目录__07、Drools 规则引擎 - Drools - 构建，部署和应用实例.md)
+- [08、Drools 规则引擎 - Drools - 可执行规则模型](./教程目录__08、Drools 规则引擎 - Drools - 可执行规则模型.md)
+- [09、Drools 规则引擎 - Drools - 剩余部分](./教程目录__09、Drools 规则引擎 - Drools - 剩余部分.md)
+- [10、Drools 规则引擎 - 核心概念介绍](./教程目录__10、Drools 规则引擎 - 核心概念介绍.md)
+- [11、Drools 规则引擎 - 无状态会话](./教程目录__11、Drools 规则引擎 - 无状态会话.md)
+- [12、Drools 规则引擎 - 有状态会话和会话池](./教程目录__12、Drools 规则引擎 - 有状态会话和会话池.md)
+- [13、Drools 规则引擎 - 规则引擎的推断和事实维护](./教程目录__13、Drools 规则引擎 - 规则引擎的推断和事实维护.md)
+- [14、Drools 规则引擎 - 有关逻辑插入的例子和相等模式](./教程目录__14、Drools 规则引擎 - 有关逻辑插入的例子和相等模式.md)
+- [15、Drools 规则引擎 - 执行控制](./教程目录__15、Drools 规则引擎 - 执行控制.md)
+- [16、Drools 规则引擎 - 规则执行模式和线程安全](./教程目录__16、Drools 规则引擎 - 规则执行模式和线程安全.md)
+- [17、Drools 规则引擎 - drools中的事实传播模式和议程评估过滤器](./教程目录__17、Drools 规则引擎 - drools中的事实传播模式和议程评估过滤器.md)
+- [18、Drools 规则引擎 - Phreak算法](./教程目录__18、Drools 规则引擎 - Phreak算法.md)
+- [19、Drools 规则引擎 - CEP 复杂事件处理](./教程目录__19、Drools 规则引擎 - CEP 复杂事件处理.md)
+- [20、Drools 规则引擎 - CEP 的属性更改设置和监听器](./教程目录__20、Drools 规则引擎 - CEP 的属性更改设置和监听器.md)
+- [21、Drools 规则引擎 - CEP 的时间操作](./教程目录__21、Drools 规则引擎 - CEP 的时间操作.md)
+- [22、Drools 规则引擎 - CEP 会话时钟，事件流和切入点](./教程目录__22、Drools 规则引擎 - CEP 会话时钟，事件流和切入点.md)
+- [23、Drools 规则引擎 - CEP 滑动窗口和内存管理](./教程目录__23、Drools 规则引擎 - CEP 滑动窗口和内存管理.md)
+- [24、Drools 规则引擎 - CEP 查询、事件监听、调试日志和性能调优](./教程目录__24、Drools 规则引擎 - CEP 查询、事件监听、调试日志和性能调优.md)

@@ -1,0 +1,49 @@
+# 19、JSP 页面重定向
+- 来源：https://ddkk.com/zhuanlan/java/jsp/19.html
+- 分类：JSP 教程
+- 分组：教程目录
+## JSP 页面重定向
+
+当需要将文档移动到一个新的位置时，就需要使用JSP重定向了。
+
+最简单的重定向方式就是使用response对象的sendRedirect()方法。这个方法的签名如下：
+
+```java
+public void response.sendRedirect(String location)
+throws IOException 
+```
+
+这个方法将状态码和新的页面位置作为响应发回给浏览器。您也可以使用setStatus()和setHeader()方法来得到同样的效果：
+
+```java
+....
+String site = "http://www.w3cschool.cn" ;
+response.setStatus(response.SC_MOVED_TEMPORARILY);
+response.setHeader("Location", site); 
+....
+```
+
+## 实例演示
+
+这个例子表明了JSP如何进行页面重定向：
+
+```java
+<%@ page import="java.io.*,java.util.*" %>
+<html>
+<head>
+<title>Page Redirection</title>
+</head>
+<body>
+<center>
+<h1>Page Redirection</h1>
+</center>
+<%    
+// 重定向到新地址    
+String site = new String("http://www.w3cschool.cn");    
+response.setStatus(response.SC_MOVED_TEMPORARILY);    
+response.setHeader("Location", site);  %>
+</body>
+</html>
+```
+
+将以上代码保存在PageRedirecting.jsp文件中，然后访问http://localhost:8080/PageRedirect.jsp，它将会把您带至//www.w3cschool.cn/。

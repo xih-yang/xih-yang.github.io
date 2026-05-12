@@ -1,0 +1,30 @@
+# DDKK 抓取结果
+
+- 入口：https://ddkk.com/zhuanlan/design/python/index.html
+- 文章数：25
+
+- [Python 设计模式 - 阅读指南](./教程目录__Python 设计模式 - 阅读指南.md)
+- [01、Python - 设计模式介绍](./教程目录__01、Python - 设计模式介绍.md)
+- [02、Python - 普通工厂模式](./教程目录__02、Python - 普通工厂模式.md)
+- [03、Python - 抽象工厂模式](./教程目录__03、Python - 抽象工厂模式.md)
+- [04、Python - 建造者模式](./教程目录__04、Python - 建造者模式.md)
+- [05、Python - 单例模式](./教程目录__05、Python - 单例模式.md)
+- [06、Python - 原型模式](./教程目录__06、Python - 原型模式.md)
+- [07、Python - 适配器模式](./教程目录__07、Python - 适配器模式.md)
+- [08、Python - 桥接模式](./教程目录__08、Python - 桥接模式.md)
+- [09、Python - 组合模式](./教程目录__09、Python - 组合模式.md)
+- [10、Python - 外观模式](./教程目录__10、Python - 外观模式.md)
+- [11、Python - 代理模式](./教程目录__11、Python - 代理模式.md)
+- [12、Python - 装饰器模式](./教程目录__12、Python - 装饰器模式.md)
+- [13、Python - 享元模式](./教程目录__13、Python - 享元模式.md)
+- [14、Python - 责任链模式](./教程目录__14、Python - 责任链模式.md)
+- [15、Python - 解释器模式](./教程目录__15、Python - 解释器模式.md)
+- [16、Python - 迭代器模式](./教程目录__16、Python - 迭代器模式.md)
+- [17、Python - 观察者模式](./教程目录__17、Python - 观察者模式.md)
+- [18、Python - 中介者模式](./教程目录__18、Python - 中介者模式.md)
+- [19、Python - 访问者模式](./教程目录__19、Python - 访问者模式.md)
+- [20、Python - 备忘录模式](./教程目录__20、Python - 备忘录模式.md)
+- [21、Python - 命令模式](./教程目录__21、Python - 命令模式.md)
+- [22、Python - 状态模式](./教程目录__22、Python - 状态模式.md)
+- [23、Python - 策略模式](./教程目录__23、Python - 策略模式.md)
+- [24、Python - 模板模式](./教程目录__24、Python - 模板模式.md)

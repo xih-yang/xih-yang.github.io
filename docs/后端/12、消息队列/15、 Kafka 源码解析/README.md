@@ -1,0 +1,30 @@
+# DDKK 抓取结果
+
+- 入口：https://ddkk.com/zhuanlan/mq/kafka/8/index.html
+- 文章数：25
+
+- [Kafka 源码解析 - 阅读指南](./教程目录__Kafka 源码解析 - 阅读指南.md)
+- [01、Kafka 源码解析 - Kafka背景及架构介绍](./教程目录__01、Kafka 源码解析 - Kafka背景及架构介绍.md)
+- [02、Kafka 源码解析 - Kafka High Availability （上）](./教程目录__02、Kafka 源码解析 - Kafka High Availability （上）.md)
+- [03、Kafka 源码解析 - Kafka High Availability （下）](./教程目录__03、Kafka 源码解析 - Kafka High Availability （下）.md)
+- [04、Kafka 源码解析 - Kafka Consumer设计解析](./教程目录__04、Kafka 源码解析 - Kafka Consumer设计解析.md)
+- [05、Kafka 源码解析 - Kafka性能测试方法及Benchmark报告](./教程目录__05、Kafka 源码解析 - Kafka性能测试方法及Benchmark报告.md)
+- [06、Kafka 源码解析 - Kafka高性能架构之道](./教程目录__06、Kafka 源码解析 - Kafka高性能架构之道.md)
+- [07、Kafka 源码解析 - Kafka Stream](./教程目录__07、Kafka 源码解析 - Kafka Stream.md)
+- [08、Kafka 源码解析 - Exactly Once语义与事务机制原理](./教程目录__08、Kafka 源码解析 - Exactly Once语义与事务机制原理.md)
+- [09、Kafka 源码解析 - 为何去掉replica.lag.max.messages参数](./教程目录__09、Kafka 源码解析 - 为何去掉replica.lag.max.messages参数.md)
+- [10、Kafka 源码解析 - Kafka如何创建topic](./教程目录__10、Kafka 源码解析 - Kafka如何创建topic.md)
+- [11、Kafka 源码解析 - Kafka无消息丢失配置](./教程目录__11、Kafka 源码解析 - Kafka无消息丢失配置.md)
+- [12、Kafka 源码解析 - Kafka 如何读取offset topic内容 (__consumer_offsets)](./教程目录__12、Kafka 源码解析 - Kafka 如何读取offset topic内容 (__consumer_offsets).md)
+- [13、Kafka 源码解析 - Kafka消费组(consumer group)](./教程目录__13、Kafka 源码解析 - Kafka消费组(consumer group).md)
+- [14、Kafka 源码解析 - Kafka producer介绍](./教程目录__14、Kafka 源码解析 - Kafka producer介绍.md)
+- [15、Kafka 源码解析 - Kafka controller重设计](./教程目录__15、Kafka 源码解析 - Kafka controller重设计.md)
+- [16、Kafka 源码解析 - Kafka 0.11消息设计](./教程目录__16、Kafka 源码解析 - Kafka 0.11消息设计.md)
+- [17、Kafka 源码解析 - Kafka 0.11客户端集群管理工具AdminClient](./教程目录__17、Kafka 源码解析 - Kafka 0.11客户端集群管理工具AdminClient.md)
+- [18、Kafka 源码解析 - Kafka与Flink集成](./教程目录__18、Kafka 源码解析 - Kafka与Flink集成.md)
+- [19、Kafka 源码解析 - Kafka consumer group位移重设](./教程目录__19、Kafka 源码解析 - Kafka consumer group位移重设.md)
+- [20、Kafka 源码解析 - Apache Flink Kafka consumer](./教程目录__20、Kafka 源码解析 - Apache Flink Kafka consumer.md)
+- [21、Kafka 源码解析 - 关于Kafka幂等producer的讨论](./教程目录__21、Kafka 源码解析 - 关于Kafka幂等producer的讨论.md)
+- [22、Kafka 源码解析 - Kafka水位(high watermark)与leader epoch的讨论](./教程目录__22、Kafka 源码解析 - Kafka水位(high watermark)与leader epoch的讨论.md)
+- [23、Kafka 源码解析 - Flink + Kafka 0.11端到端精确一次处理语义的实现](./教程目录__23、Kafka 源码解析 - Flink + Kafka 0.11端到端精确一次处理语义的实现.md)
+- [24、Kafka 源码解析 - 关于Kafka监控方案的讨论](./教程目录__24、Kafka 源码解析 - 关于Kafka监控方案的讨论.md)

@@ -1,0 +1,43 @@
+# 05、Spring Security 源码解析：自定义的过滤器是如何生效的
+- 来源：https://ddkk.com/zhuanlan/security/springsecurity/10/20.html
+- 分类：安全框架
+- 分组：Spring Security 源码解析 (A)
+### Spring Security用户登录验证是如何实现的
+
+在configure(HttpSecurity http)的默认实现里面，在formLogin()方法里面在configurers集合中注入了FormLoginConfigurer。
+
+基于前面几章已经学到的知识，我们可以知道后续在configure方法中会调用FormLoginConfigurer的configure方法，**FormLoginConfigurer自身并没有configure方法，但是它的父类里面有configure方法，所以父类的configure方法将被调用**。
+
+可以看到代码中又调用了熟悉的http.addFilter方法，这个方法将在httpSecurity的filters集合中注入UsernamePasswordAuthenticationFilter。至此，UsernamePasswordAuthenticationFilter就存在于默认的过滤器链中了。
+
+可以看到Spring Security的默认过滤器链是对所有的请求都进行过滤，因此，当发起一个请求后，UsernamePasswordAuthenticationFilter的doFilter将会在某一时刻被调用。
+
+又因为UsernamePasswordAuthenticationFilter没有doFilter，但是它的父类有doFilter，所以父类的doFilter方法将被调用。
+
+可以看到首先是判断请求是否需要验证，调用的是requiresAuthentication方法。根据UsernamePasswordAuthenticationFilter的构造函数，可以看出这是在判断请求是否是以post方式的/login请求。具体怎么判断的可以自行点击源码查看。如果不是以post方式的/login请求，UsernamePasswordAuthenticationFilter将不会进行过滤，而是直接进入下一个过滤器。
+
+主要的判断方式就是attemptAuthentication，attemptAuthentication在UsernamePasswordAuthenticationFilter中有自己的实现，因此将会被调用。
+
+attemptAuthentication方法里面主要是获取了用户名和密码，并将用户名和密码封装成了UsernamePasswordAuthenticationToken对象，然后调用了this.getAuthenticationManager().authenticate(authRequest)。所以，真正的过滤逻辑是在this.getAuthenticationManager()这个方法返回对象的authenticate方法里面。**【注意：后续的部分代码是为了确认this.getAuthenticationManager()得到的是什么对象，知道是什么对象后，记得跳回主流程！！！】**
+
+接下来看this.getAuthenticationManager()得到的是什么对象。
+
+**在FormLoginConfigurer的父类的configure方法里面，对authenticationManager进行了设置。**
+
+那么这个设置的getSharedObject(AuthticationManagerBuilder.class)获取到的对象是什么呢！后续将调用这个获取到的对象的build方法。
+
+通过对比可以看到getSharedObject(AuthticationManagerBuilder.class)获取到的对象就是AuthenticationManagerBuilder对象。因此AuthenticationManagerBuilder的build方法将被调用，又因为AuthenticationManagerBuilder没有build方法，因此它的父类的build方法会被调用，到最后会调用AuthenticationManagerBuilder的performBuild方法。方法返回的是ProviderManager对象。
+
+至此，我们知道了this.getAuthenticationManager()获取到的是ProviderManager对象，然后会调用ProviderManager对象的authenticate方法进行登陆验证！
+
+ProviderManager的authenticate方法主要就是获取到所有的AuthenticationProvider，然后调用每一个AuthenticationProvider的authenticate验证方法！
+
+那么问题又来了，AuthenticationProvider又是什么呢？
+
+前面的章节已经介绍了三个configure方法，其中的configure(AuthenticationManagerBuilder auth)主要就是做自定义的验证实现的！在configure(AuthenticationManagerBuilder auth)方法中注入自定义的验证实现，然后在创建ProviderManager时，传入自定义的验证实现，在ProviderManager的authenticate方法中调用每一个AuthenticationProvider的authenticate验证方法！
+
+PS：在创建自定义的AuthenticationProvider时，如果实现AuthenticationProvider接口或继承其子类，比如需要查询数据库可以继承DaoAuthenticationProvider。
+
+### 后续篇幅摘要
+
+后续篇章主要讲解**如何自定义过滤器。**

@@ -1,0 +1,84 @@
+# 7、Memcached add 命令
+- 来源：https://ddkk.com/zhuanlan/db/memcached/7.html
+- 分类：缓存数据库
+- 分组：教程目录
+Memcached add 命令用于将 **value(数据值)** 存储在指定的 **key(键)** 中
+
+## 语法
+
+```sh
+add key flags exptime bytes [noreply]
+value
+```
+
+### 参数说明
+
+- **key** ： 键值 key-value 结构中的 key
+- **flags** ：可以包括键值对的整型参数，客户机使用它存储关于键值对的额外信息
+- **exptime** ：在缓存中保存键值对的时间长度（以秒为单位，0 表示永远）
+- **bytes** ：在缓存中存储的字节数
+- **noreply** ：可选，该参数告知服务器不需要返回数据
+- **value** ：存储的值（始终位于第二行）（可直接理解为key-value结构中的value）
+
+### 返回值说明
+
+- 如果数据添加成功，返回 **STORED**
+- 如果 key 已经存在，且没过期，则不会更新数据，返回值为 **NOT_STORED**
+- 如果 key 已经存在，但已经过期，那么替换成功，返回值为 **STORED**
+- 如果执行错误，返回 **CLIENT_ERROR**
+
+## 范例
+
+#### 1. 如果数据添加成功，返回 **STORED
+
+```sh
+add site 0 1000 11
+ddkk.com
+STORED
+```
+
+#### 2. 如果 key 已经存在，且没过期
+
+如果key 已经存在，且没过期，则不会更新数据，返回值为 **NOT_STORED**
+
+```sh
+flush_all
+OK
+add site 0 1000 11
+ddkk.com
+STORED
+get site  # key 已经存在
+VALUE site 0 11
+ddkk.com
+END
+add site 0 1000 11
+csd.souyunku.cn
+NOT_STORED  #  返回 NOT_STORED
+get site
+VALUE site 0 11
+ddkk.com  # 数据没更新
+END
+```
+
+#### 3. 如果 key 已经存在，但已经过期
+
+如果key 已经存在，但已经过期，那么替换成功，返回值为 STORED
+
+```sh
+flush_all
+OK
+add site 0 10 11
+ddkk.com
+STORED
+get site
+VALUE site 0 11
+ddkk.com
+END
+add site 0 11 7  # 等待10秒后再添加
+souyunku.cn
+STORED   # 返回成功
+get site
+VALUE site 0 7
+souyunku.cn  # 数据已经更新
+END
+```

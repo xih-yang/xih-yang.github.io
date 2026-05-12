@@ -1,0 +1,31 @@
+# DDKK 抓取结果
+
+- 入口：https://ddkk.com/zhuanlan/qianduan/typescript/1/index.html
+- 文章数：26
+
+- [TypeScript 教程 - 阅读指南](./教程目录__TypeScript 教程 - 阅读指南.md)
+- [01、TypeScript 实战 - 准备工作](./教程目录__01、TypeScript 实战 - 准备工作.md)
+- [02、TypeScript 实战 - 静态类型](./教程目录__02、TypeScript 实战 - 静态类型.md)
+- [03、TypeScript 实战 - 基础静态类型和对象静态类型](./教程目录__03、TypeScript 实战 - 基础静态类型和对象静态类型.md)
+- [04、TypeScript 实战 - 类型注释和类型推断](./教程目录__04、TypeScript 实战 - 类型注释和类型推断.md)
+- [05、TypeScript 实战 - 函数参数和返回类型定义](./教程目录__05、TypeScript 实战 - 函数参数和返回类型定义.md)
+- [06、TypeScript 实战 - 数组类型的定义](./教程目录__06、TypeScript 实战 - 数组类型的定义.md)
+- [07、TypeScript 实战 - 元组的使用](./教程目录__07、TypeScript 实战 - 元组的使用.md)
+- [08、TypeScript 实战 - interface 接口1](./教程目录__08、TypeScript 实战 - interface 接口1.md)
+- [09、TypeScript 实战 - interface 接口2](./教程目录__09、TypeScript 实战 - interface 接口2.md)
+- [10、TypeScript 实战 - 类的概念和使用](./教程目录__10、TypeScript 实战 - 类的概念和使用.md)
+- [11、TypeScript 实战 - 类的访问类型](./教程目录__11、TypeScript 实战 - 类的访问类型.md)
+- [12、TypeScript 实战 - 类的构造函数](./教程目录__12、TypeScript 实战 - 类的构造函数.md)
+- [13、TypeScript 实战 - 类的Geteer , Setter 和 Static 使用](./教程目录__13、TypeScript 实战 - 类的Geteer , Setter 和 Static 使用.md)
+- [14、TypeScript 实战 - 类的只读属性和抽象类](./教程目录__14、TypeScript 实战 - 类的只读属性和抽象类.md)
+- [15、TypeScript 实战 - 配置文件-初识 tsconfig.json](./教程目录__15、TypeScript 实战 - 配置文件-初识 tsconfig.json.md)
+- [16、TypeScript 实战 - 配置文件-初识 compilerOptions 配置项](./教程目录__16、TypeScript 实战 - 配置文件-初识 compilerOptions 配置项.md)
+- [17、TypeScript 实战 - 配置文件-初识 compilerOptions 配置内容详解](./教程目录__17、TypeScript 实战 - 配置文件-初识 compilerOptions 配置内容详解.md)
+- [18、TypeScript 实战 - 联合类型和类型保护](./教程目录__18、TypeScript 实战 - 联合类型和类型保护.md)
+- [19、TypeScript 实战 - 枚举类型](./教程目录__19、TypeScript 实战 - 枚举类型.md)
+- [20、TypeScript 实战 - 函数泛型](./教程目录__20、TypeScript 实战 - 函数泛型.md)
+- [21、TypeScript 实战 - 类中的泛型](./教程目录__21、TypeScript 实战 - 类中的泛型.md)
+- [22、TypeScript 实战 - namespace命名空间（上）](./教程目录__22、TypeScript 实战 - namespace命名空间（上）.md)
+- [23、TypeScript 实战 - namespace命名空间（下）](./教程目录__23、TypeScript 实战 - namespace命名空间（下）.md)
+- [24、TypeScript 实战 - 使用import语法](./教程目录__24、TypeScript 实战 - 使用import语法.md)
+- [25、TypeScript 实战 - 用Parcel打包TypeScript代码](./教程目录__25、TypeScript 实战 - 用Parcel打包TypeScript代码.md)

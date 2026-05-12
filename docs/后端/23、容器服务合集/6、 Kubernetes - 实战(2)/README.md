@@ -1,0 +1,32 @@
+# DDKK 抓取结果
+
+- 入口：https://ddkk.com/zhuanlan/container/kubernetes/2/index.html
+- 文章数：27
+
+- [Kubernetes - 实战(2) - 阅读指南](./教程目录__Kubernetes - 实战(2) - 阅读指南.md)
+- [01、Kubernetes 实战 - CI/CD 简介与 ECS 服务规划](./教程目录__01、Kubernetes 实战 - CI-CD 简介与 ECS 服务规划.md)
+- [02、Kubernetes 实战 - 购买阿里云 ECS 实例](./教程目录__02、Kubernetes 实战 - 购买阿里云 ECS 实例.md)
+- [03、Kubernetes 实战 - ci-server 构建节点 Docker、Jenkins 环境搭建](./教程目录__03、Kubernetes 实战 - ci-server 构建节点 Docker、Jenkins 环境搭建.md)
+- [04、Kubernetes 实战 - k8s 集群环境搭建](./教程目录__04、Kubernetes 实战 - k8s 集群环境搭建.md)
+- [05、Kubernetes 实战 - k8s 应用部署演示 - 直接部署和 yaml 部署](./教程目录__05、Kubernetes 实战 - k8s 应用部署演示 - 直接部署和 yaml 部署.md)
+- [06、Kubernetes 实战 - Deployment 部署对象](./教程目录__06、Kubernetes 实战 - Deployment 部署对象.md)
+- [07、Kubernetes 实战 - Service 服务介绍和使用](./教程目录__07、Kubernetes 实战 - Service 服务介绍和使用.md)
+- [08、Kubernetes 实战 - Ingress 路由转发的介绍与使用](./教程目录__08、Kubernetes 实战 - Ingress 路由转发的介绍与使用.md)
+- [09、Kubernetes 实战 - 灰度发布的介绍与实现](./教程目录__09、Kubernetes 实战 - 灰度发布的介绍与实现.md)
+- [10、Kubernetes 实战 - 滚动发布的介绍与实现](./教程目录__10、Kubernetes 实战 - 滚动发布的介绍与实现.md)
+- [11、Kubernetes 实战 - 服务探针简介](./教程目录__11、Kubernetes 实战 - 服务探针简介.md)
+- [12、Kubernetes 实战 - 服务探针简介](./教程目录__12、Kubernetes 实战 - 服务探针简介.md)
+- [13、Kubernetes 实战 - docker 私有镜像仓库 harbor 安装和使用](./教程目录__13、Kubernetes 实战 - docker 私有镜像仓库 harbor 安装和使用.md)
+- [14、Kubernetes 实战 - Secret 对象的简介与创建](./教程目录__14、Kubernetes 实战 - Secret 对象的简介与创建.md)
+- [15、Kubernetes 实战 - Secret 镜像的使用](./教程目录__15、Kubernetes 实战 - Secret 镜像的使用.md)
+- [16、Kubernetes 实战 - ECS 服务停机和环境修复](./教程目录__16、Kubernetes 实战 - ECS 服务停机和环境修复.md)
+- [17、Kubernetes 实战 - k8s 服务发现简介](./教程目录__17、Kubernetes 实战 - k8s 服务发现简介.md)
+- [18、Kubernetes 实战 - 使用 ConfigMap 管理服务的环境变量](./教程目录__18、Kubernetes 实战 - 使用 ConfigMap 管理服务的环境变量.md)
+- [19、Kubernetes 实战 - k8s 污点和容忍度](./教程目录__19、Kubernetes 实战 - k8s 污点和容忍度.md)
+- [20、Kubernetes 实战 - k8s 项目部署流程和操作梳理](./教程目录__20、Kubernetes 实战 - k8s 项目部署流程和操作梳理.md)
+- [21、Kubernetes 实战 - k8s 部署 MySQL 服务（secret、deployment、service）](./教程目录__21、Kubernetes 实战 - k8s 部署 MySQL 服务（secret、deployment、service）.md)
+- [22、Kubernetes 实战 - 布署 nodejs 后端项目（上）](./教程目录__22、Kubernetes 实战 - 布署 nodejs 后端项目（上）.md)
+- [23、Kubernetes 实战 - 布署 nodejs 后端项目（中）](./教程目录__23、Kubernetes 实战 - 布署 nodejs 后端项目（中）.md)
+- [24、Kubernetes 实战 - 布署 nodejs 后端项目（下）](./教程目录__24、Kubernetes 实战 - 布署 nodejs 后端项目（下）.md)
+- [25、Kubernetes 实战 - 布署前端项（下）](./教程目录__25、Kubernetes 实战 - 布署前端项（下）.md)
+- [26、Kubernetes 实战 - 实现自动构建部署](./教程目录__26、Kubernetes 实战 - 实现自动构建部署.md)

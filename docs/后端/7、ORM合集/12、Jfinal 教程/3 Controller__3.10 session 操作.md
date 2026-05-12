@@ -1,0 +1,20 @@
+# 3.10 session 操作
+- 来源：https://ddkk.com/zhuanlan/orm/jfinal/30.html
+- 分类：ORM框架
+- 分组：3 Controller
+通过setSessionAttr(key, value) 可以向 session 中存放数据，getSessionAttr(key) 可以从 session 中读取数据。还可以通过 getSession()得到 session 对象从而使用全面的session API。
+
+```java
+public void login() {
+   User user = loginService.login(...);
+   if (user != null) {
+      setSessionAttr("loginUser", user);
+   }
+}
+```
+
+为了便于项目支持集群与分布式，不建议使用 session 存放数据，建议将 session 范畴数据存放在数据库或者类似于 redis 的共享空间之中。
+
+> 版权声明：「DDKK.COM 弟弟快看，程序员编程资料站」本站文章，版权归原作者所有
+
+> JFinal 官方 | https://jfinal.com

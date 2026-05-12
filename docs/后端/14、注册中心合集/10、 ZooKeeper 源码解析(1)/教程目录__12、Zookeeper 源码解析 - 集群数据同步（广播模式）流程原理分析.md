@@ -1,0 +1,311 @@
+# 12、Zookeeper 源码解析 - 集群数据同步（广播模式）流程原理分析
+- 来源：https://ddkk.com/zhuanlan/registered/zookeeper/1/12.html
+- 分类：注册中心
+- 分组：教程目录
+## 1.前话
+
+在前面几篇中已经分析过了ZK集群是如何建立通信连接对并使用FLE选举算法完成选举的，从本篇开始将会分析ZK集群剩下的数据同步模式以及集群机器间的心跳检测，大致分为四个部分：
+
+**1、** Leader角色和Follower角色之间建立数据同步通信流程；
+
+**2、** Request请求如果被Leader角色接收的集群数据流向；
+
+**3、** Request如果被Follower角色接收的集群数据流向；
+
+**4、** ZK集群间的心跳检测ping操作流程及时间间隔；
+
+本篇便作为开胃菜，先大致介绍数据同步流程的原理，使用流程图等辅助分析理解整体流程，后续的文章再在此基础上进行源码层面的分析，例子依旧是前面使用过的机器A、B和C，当然经过了选举流程后sid最大的机器C已经成为了集群Leader了，B和C为Follower。
+
+在本次流程中同样不分析Observer角色，以后如果有空可以单独分离出来一两篇来具体分析一下Observer在集群中的作用以及在源码层面是如何运行的。
+
+**注：本篇基于ZK版本3.4.8分析的。**
+
+## 2.Leader机器与Follower机器建立通信
+
+数据同步建立通信的流程可以看成是古代附属王朝向中央王朝进行朝贡的流程，即各个Follower主动向Leader发送连接请求，Leader接收到各个Follower机器的请求后生成对应的处理器，这些处理器可以看成是中央王朝派遣的接待使。当然这中间肯定是要经过一系列的逻辑确定Leader机器是否是真正合格的Leader，需要得到各个Follower的支持和校验，否则集群将会重新发起选举选出新的Leader，就像古代附属王朝都想篡位自己当皇上天子一样，当然ZK集群比这简单很多。
+
+### 2.1 相关角色及交互关系
+
+大致通信流程相关角色及交互关系如下图：
+
+对于其中的流程以及注意点需要特别说明下：
+
+- 方框的代表普通类对象，角有圆形弧度的说明是线程对象，虚线代表启动线程对象；
+- QuorumPacket：集群通信的包对象，Leader和Follower之间的通信便是使用QuorumPacket类为载体进行发送与接收的，后面将其称为packet数据包；
+- Follower角色：在继承关系上会继承Learner，Observer也会继承Learner类，因此从某一角度来看ZK集群中会含有两种角色：Leader和Learner，但是本次只会分析Follower角色；
+- LearnerCnxAcceptor组件：简单的翻译下这个类名：Learner角色的连接接收器，顾名思义这个多线程类的作用便是用来接收各个Learner角色发送过来的连接请求，并进行相应的处理，从图中可以看出来接收到连接请求后将会使用接收到的Socket创建LearnerHandler线程对象；
+- LearnerHandler组件：用来维护与Learner的通信关系，负责接收和向Learner发送请求数据包，相当于前面提到过中央王朝（Leader）派遣的接待使，Leader不会直接与Learner进行通信，而是每个都有一个LearnerHandler来维护；
+- collection correspond：Leader与LearnerHandler之间的通信并不是直接交互的，如果接收到了Learner消息，LearnerHandler将会先放入到集合中，Leader则是直接判断集合数据，但Leader如果要做什么操作（其实只有ping操作，但留在后面再说）将会直接调用LearnerHandler对象的方法。
+
+### 2.2 建立通信交互流程图
+
+Leader和Follower之间建立通信主要是Socket通信比较多，大部分都是固定的异步即时通信，因此如果没有例子单看流程的话会比较晕，因为该流程的异步通信至少都有10个左右，更不用说如果是中途选举成功，还有一些旧数据需要同步的情况了。
+
+本次建立通信交互流程依旧是原来的机器A、B和C，大致流程图如下：
+
+整个流程较为复杂，因为涉及到两台机器的Socket即时通信，每次接收方法流程都会阻塞，因此需要在整体上了解整个流程，需要注意的是LearnerHandler对象和Follower对象间的Socket通信介质是QuorumPacket集群数据包对象，后面会统称为消息。
+
+从图中可以看出来流程总共有26个，但总体上来看，整个流程总共有7个阶段：
+
+**1、** 第一阶段：Leader和Follower的准备阶段，如Leader创建LearnerCnxAcceptor对象，Follower开始连接Leader机器地址；
+
+**2、** 第二阶段：Leader机器验证集群内的FOLLOWERINFO类型消息，确保建立通信集群内确实是有超过半数的机器参与其中的，并且发送LEADERINFO类型消息将Leader机器的信息同步给各个Follower机器；
+
+**3、** 第三阶段：Leader机器验证集群内的ACKEPOCH类型消息，该消息是为了判断集群内各个机器是否已经收到了LEADERINFO类型消息并处理成功；
+
+**4、** 第四阶段：Leader机器将本机器日志信息尚未同步给集群内机器的请求再次以PROPOSAL-COMMIT对数据发送给各个Learner机器进行同步，并最终发送NEWLEADER类型消息，确保各个Follower已经完成消息同步并认可当前集群Leader机器；
+
+**5、** 第五阶段：Leader机器验证集群内的ACK类型消息，确定超过半数的机器是在集群内正常运行的；
+
+**6、** 第六阶段：Leader机器发送UPTODATE类型消息通知各个Follower可以退出和LearnerHandler对象的循环消息通信，开始准备对外处理请求服务了；
+
+**7、** 第七阶段：最终阶段，各个机器启动ZooKeeperServer对象准备处理ZK客户端请求，并且Leader进入心跳检测循环，用来监听集群的运行情况；LearnerHandler和Follower进入最终的循环消息通信，以便集群后续接收ZK客户端的请求后可以进行同步请求通信；
+
+在整个流程中可以分为三个角色流程：
+
+**1、** L开头：Leader机器的Leader对象的流程，该角色流程从图中可以看出来并不长，主要是做一些关键性的集群有效性校验以及ping操作；
+
+**2、** H开头：LearnerHandler线程对象的方法流程，建立通信流程的主要角色之一，负责和Follower角色进行通信交互，承担Leader和Follower的中介者；
+
+**3、** F开头：Follower对象的方法流程，建立通信流程的主要角色之一，负责向Leader机器发送集群有效性消息，并接收Leader机器发送过来的同步数据；
+
+接下来将上述的七个大阶段进行细分的分析，将会按图中右边的箭头方向来分析，因为该流程大概描述了机器间通信的流程，具体流程分析如下：
+
+**1、** L1流程：选举完毕之后调用lead()方法开始领导集群并实例化启动Learner连接接收对象LearnerCnxAcceptor，用来接收Follower机器的Follower对象连接请求；
+
+**2、** F1流程：选举完毕之后调用followLeader()方法并从配置中获取Leader的地址配置并发送连接请求，连接成功后将会互相创建apache的InputArchive输入和OutputArchive输出流对象以便后续发送消息；
+
+**3、** H1流程：LearnerCnxAcceptor对象接收到Follower机器发送过来的请求连接后创建对应的Follower连接处理对象LearnerHandler，开始和已经发送连接请求的Follower进行通信；
+
+**4、** F2流程：发送完连接Leader机器请求后将会发送FOLLOWERINFO类型消息通知Leader机器上的LearnerHandler对象本机器的sid和epoch信息，发送后阻塞接收消息；
+
+**5、** H2流程：接收到Follower机器发送过来的FOLLOWERINFO类型消息，并将接收到的sid信息保存到connectingFollowers集合，使用接收到的epoch信息进行同步，随后阻塞直到有过半的Follower机器发送此类消息；
+
+**6、** L2流程：当Leader在创建完LearnerCnxAcceptor对象后便会阻塞查询元素内容为各Follower机器的sid集合connectingFollowers，并同步各个机器的epoch信息，一直阻塞直到集群内有过半的机器发送了各自的epoch信息（FOLLOWERINFO类型消息）后才会继续下一步；
+
+**7、** H3流程：前面connectingFollowers集合接收到的消息过半后将会执行到此流程，这里将会发送LEADERINFO类型消息给对应的Socket，包括version信息和最新的epoch信息，随后阻塞读取消息；
+
+**8、** F3流程：接收到对应LearnerHandler对象发送过来的LEADERINFO类型消息，处理版本信息并根据发送过来的epoch信息设置本机器的epoch信息；
+
+**9、** F4流程：处理完epoch信息之后发送ACKEPOCH类型消息并返回新的epoch信息，随后开始阻塞读取消息；
+
+**10、** H4流程：接收到对应Follower机器发送过来的ACKEPOCH类型消息，并将其保存到集合electingFollowers中，一直阻塞到有超过半数的机器发送该类型消息；
+
+**11、** L3流程：如果L2流程已经接收到了过半Follower机器的消息后将会执行到此流程，在此阻塞查询集合electingFollowers是否接收到了过半机器的ACKEPOCH类型消息；
+
+**12、** H5流程：开始读取Leader机器以前的commitedLog日志信息，如果committedLog数量不为空，则将zxid大于集群当前的zxid的PROPOSAL-COMMIT对数据放到待发送数据集合queuedPackets中准备后续同步给集群内的各个机器zxid大于本集群当前的zxid的那些数据为以前集群接收到但并未来得及处理的数据，需要重新同步到各个机器保存；
+
+**13、** H6流程：处理完日志信息后添加NEWLEADER到待发送集合queuedPackets中并发送刚刚处理过的pakcet包消息给对应的Learner机器，消息类型为SNAP、DIFF或者TRUNC三种消息类型中的一种；
+
+**14、** F5流程：接收到LearnerHandler发送过来的SNAP、DIFF或者TRUNC三种消息类型的一种；如果是DIFF则无需做任何事情，因为DIFF代表各个机器zxid一致，无消息丢失，或者日志信息都处理过，需要同步的消息数量为0；如果是SNAP说明日志数据的proposal对象为空；如果是TRUNC类型则说明有需要同步的消息；
+
+**15、** H7流程：启动线程对象时刻轮询queuedPackets集合并发送给对应的Learner，此时将会把前面放入queuedPackets集合堆积的消息依次发送出去；
+
+**16、** F6流程：由于H7会依次将queuedPackets集合中的消息发送给对应的Follower，且从F6开始Follower已经开始循环从Leader读取消息了；当读取到集群Leader机器的LearnerHandler对象发送过来的PROPOSAL-COMMIT对消息后会处理commitedLog数据，处理完PROPOSAL-COMMIT对消息将会轮询到NEWLEADER类型消息，前面的H6流程分析过；
+
+**17、** F7流程：接收到NEWLEADER类型消息后Follower便已经知道了当前Leader的确切消息，此时会更新currentEpoch以及保存当前日志快照信息，随后发送ACK类型响应消息；
+
+**18、** H8流程：接收到各个Follower机器发送过来的ACK类型消息，并添加到newLeaderProposal对象的ackSet集合中，随后阻塞直到集群内有过半的机器响应ACK类型消息；
+
+**19、** L4流程：如果L3流程中已经有超过半数的机器发送ACKEPOCH类型消息Leader对象将会执行到此流程，设置完epoch信息后阻塞查询newLeaderProposal对象的ackSet集合，用来确认各机器是否有超过半数发送ACK类型消息；
+
+**20、** L5流程：执行到这一步说明集群内已经有超过一半的机器响应了ACK类型消息，此时Leader会启动ZooKeeperServer对象，这其中有个zookeeper.leaderServes配置，如果配置的no，Leader机器的ServerCnxnFactory对象将不会和ZooKeeperServer对象关联，导致Leader就算接收到Request也无法处理；
+
+**21、** L6流程：根据配置中的tickTime属性开始循环，每隔tickTime/2时间便循环一次并发送ping消息，发送ping是直接用LearnerHandler的ping方法；并且每循环两次（即每隔tickTime时间）就判断一次集群内是否有超过一半的机器响应，如果没有则退出lead()方法重新选举；
+
+**22、** H9流程：Socket对象的timeout属性由tickTime*initLimit设置成tickTime*syncLimit并向对应的Learner发送UPTODATE类型消息；
+
+**23、** H10流程：发送完UPTODATE类型消息后开始无限循环读取对应的Learner消息，并根据消息类型进行相应的处理，直到通信出现了异常；
+
+**24、** F8流程：接收到UPTODATE类型消息，退出循环并发送一个ACK类型消息，该消息会被忽略，因为该ACK消息的zxid为0，会被LearnerHandler循环收到的ACK类型消息忽略；
+
+**25、** F9流程：：Socket对象的timeout属性由tickTime*initLimit设置成tickTime*syncLimit，并启动ZooKeeperServer服务，更新epoch信息同时处理尚未提交的packet包数据；
+
+**26、** F10流程：循环定向读取Leader机器中负责维护本Follower机器的LearnerHandler对象发送过来的packet数据消息，并根据类型进行相应的处理；
+
+Leader和各个Follower建立通信的流程总共经过了26个步骤流程，需要注意的是在上面所说的超过过半机器响应消息是包括Leader机器的，也就是说如果是三台机器A、B和C，C只需要接收到A或者B的响应，再加上C机器本身的调用即可完成验证。
+
+建立通信流程已经完成，接下来将会分析Leader接收到客户端Request请求流程。
+
+## 3.Leader接收到客户端的Request请求
+
+经过刚才的流程后，现在Leader机器的各个LearnerHandler对象和具体的Follower机器已经建立专属通道通信成功，接下来便分析一下当Leader角色接收到ZK客户端的Request请求后，具体流程又是如何。
+
+### 3.1 Leader机器RequestProcessor链
+
+在具体分析前先看下在Leader机器中的RequestProcessor链，看过前面几篇中关于单机ZK接收客户端请求处理流程就可以知道RequestProcessor链是ZK处理Request请求的核心流程，集群的数据同步等流程也是嵌入在处理链当中的。
+
+Leader机器RequestProcessor处理链：
+
+在图中方框代表普通的对象，圆角框代表为线程对象，共有七个RequestProcessor接口的实现类，LeaderZooKeeperServer对象则负责创建实现类并建立RequestProcessor处理链。每个RequestProcessor接口实现类的大致作用如下：
+
+**1、** PrepRequestProcessor：RequestProcessor的开始部分，根据请求的参数判断请求的类型，如create、delete操作这些，随后将会创建相应的Record实现子类，进行一些合法性校验以及改动记录；
+
+**2、** ProposalRequestProcessor：承担请求转发的职责，会判断Request的类型，如果是LearnerSyncRequest类型则进行集群间的纯同步操作；如果是普通的Request类型则调用nextProcessor对象（CommitProcessor）处理请求，并调用Leader对象去处理Request请求，最后再调用SyncRequestProcessor来处理请求；
+
+**3、** SyncRequestProcessor：同步刷新记录请求到日志，在将请求的日志同步到磁盘之前，不会把请求传递给下一个RequestProcessor；
+
+**4、** AckRequestProcessor：调用Leader对象的processAck()方法去处理请求，相当于是RequestProcessor处理链告诉Leader对象本机器已经收到了请求并开始处理了；
+
+**5、** CommitProcessor：当ProposalRequestProcessor调用到本对象时将会阻塞，直到本机器的Leader或者Learner角色处理完请求数据的同步后，提交了请求，才会把Request请求交给下一个RequestProcessor对象；
+
+**6、** ToBeAppliedRequestProcessor：调用下一个RequestProcessor对象，并负责维护Leader对象的toBeApplied集合，如果集群的请求ACK过半，将会把同步数据对象Proposal添加到集合中，代表着该数据可以被处理了，如果后续因为异常情况没有处理成功，将会保存到内存中直到下次建立连接通信再次发送给集群各个机器进行同步处理；如果处理成功则会从toBeApplied集合中删除Proposal对象数据；
+
+**7、** FinalRequestProcessor：为RequestProcessor的末尾处理类，从名字也能看出来，基本上所有的请求都会最后经过这里此类将会处理改动记录以及session记录，如果ServerCnxn连接对象为空则直接退出，否则会根据请求的操作类型更新对象的ServerCnxn对象并回复请求的客户端；
+
+### 3.2 Leader接收Request请求并同步数据
+
+对Leader机器中的RequestProcessor处理链有了大致上的功能作用了解后，接下来便开始分析当Leader接收到了ZK客户端请求后的处理流程。大致流程图如下：
+
+正常的话本流程会涉及三种角色：Leader、Follower和Observer，但由于现在我们值分析Leader和Follower两个主要角色，因此Observer忽略。图中L开头的代表Leader机器执行的操作流程，而F开头的代表Follower执行的操作流程，并且图中直观的可以看出Leader和Follower对象的交互是通过LearnerHandler完成的。
+
+由图中可以看出完成一次数据同步分三个阶段操作：
+
+- 第一阶段：发送数据同步消息，Leader接收到请求并向各个Follower发送PROPOSAL类型消息，消息包括数据包和Request请求对象，随后Leader对象进入ACK状态；
+- 第二阶段：ACK消息确认阶段，Follower接收到PROPOSAL类型消息保存到日志文件中后给Leader响应ACK类型消息；
+- 第三阶段：提交消息并完成请求响应，当Leader接收到半数ACK确认消息后便会向Follower发送COMMIT类型消息，本机器也会完成最后的Request处理响应。
+
+本次是由Leader接收到请求消息的，因此在流程中Leader的RequestProcessor肯定是负责主要处理的，Follower当中的几个RequestProcessor只是完成简单的ACK响应、日志快照保存等操作。接下来详细分析下该流程：
+
+**1、** L1流程：ServerCnxnFactory的实现类接收到ZK客户端的NIO请求后将会反序列化为Request对象，接着将Request对象传给LeaderZooKeeperServer更新ZK客户端的心跳检测时间，随后直接调用本类的firstProcessor对象开始调用RequestProcessor处理链来处理请求；
+
+**2、** L2流程：调用PrepRequestProcessor处理器，RequestProcessor的开始部分，根据请求的参数判断请求的类型，如create、delete操作这些，随后将会创建相应的Record实现子类，进行一些合法性校验以及改动记录：；
+
+**3、** L3流程：ProposalRequestProcessor执行器将会根据请求的类型判断同步请求流程或者普通的流程，一般ZK客户端的都是普通流程，因此会先调用下一个RequestProcessor处理，并且如果请求头不为空，则调用Leader对象发送PROPOSAL类型消息，且调用SyncRequestProcessor处理器同步保存请求；
+
+**4、** L4流程：ProposalRequestProcessor调用nextProcessor将会执行到这一步，nextProcessor对象为CommitProcessor，该处理器会一直轮询，直到本机器开始处理COMMIT类型消息才会调用nextProcessor对象；
+
+**5、** L5流程：L3会调用Leader发送PROPOSAL类型消息，在该流程中会把Request请求对象以及发送的PROPOSAL类型数据包使用Proposal对象封装，并保存到对应的集合中，而数据包则会保存在LearnerHandler的queuedPackets集合中，使用Socket对象发送给对应的Follower；
+
+**6、** L6流程：当L3流程中调用ProposalRequestProcessor处理器的syncProcessor对象将会执行到该流程中，负责同步刷新记录请求到日志，在将请求的日志同步到磁盘之前，不会把请求传递给下一个RequestProcessor；
+
+**7、** L7流程：Leader机器记录日志后便调用processAck()方法，代表着本机器的PROPOSAL消息已经处理完毕，进入ACK确认阶段；
+
+**8、** F1流程：当LearnerHandler通过Socket发送成功后Follower对象将会收到PROPOSAL类型消息，并调用SyncRequestProcessor处理器开始将数据同步到本机器，同步完之后调用nextProcessor对象；
+
+**9、** F2流程：SendAckRequestProcessor处理器将会向本集群Leader机器的LearnerHandler对象发送ACK类型消息；
+
+**10、** L8流程：LearnerHandler接收到Follower机器的SendAckRequestProcessor处理器发送的ACK类型消息，调用Leader的processAck()方法进行ACK确认，确认本集群超过半数的机器处理完接收到的Request请求后，开始通过LearnerHandler向各个Follower机器发送COMMIT类型消息；
+
+**11、** L9流程：对各个Follower机器发送完请求后便直接调用CommitProcessor的commit()方法提交本机请求，随后调用nextProcessor对象；
+
+**12、** L10流程：调用ToBeAppliedRequestProcessor处理器，将刚开始添加到toBeApplied集合的Proposal对象删除；
+
+**13、** L11流程：调用FinalRequestProcessor，为RequestProcessor的末尾处理类，从名字也能看出来，基本上所有的请求都会最后经过这里此类将会处理改动记录以及session记录，最后会根据请求的操作类型更新对象的ServerCnxn对象并回复请求的客户端，至此Leader机器便已结束，ZK客户端也收到了回复；
+
+**14、** F3流程：Follower接收到COMMIT请求后调用CommitProcessor的commit()方法，提交请求，并调用nextProcessor对象；
+
+**15、** F4流程：在Follower的FinalRequestProcessor处理器上，由于Request请求并非本机接收的，因此请求的cnxn对象为空，将会直接退出流程；
+
+通过简单的PROPOSAL-ACK-COMMIT流程完成了Leader机器接收ZK客户端请求并向集群内的各个Follower同步的操作。在流程中当Leader接收到了各个机器响应的ACK消息后实际上集群便已经完成了数据同步，数据同步成功的标志为各个机器完成了将请求写入日志文件中，因此ACK后面的操作对于Follower而言实际上是没有作用的（仅局限于Leader接收到Request请求）。
+
+## 4.Follower接收到客户端的Request请求
+
+在ZK集群中Follower处理Request请求的参与度是有限的，不像单机ZK服务器一样本机器接收到Request请求后全盘处理，集群的Follower接收到Request请求后会将请求先发给Leader机器，Leader机器再按照本机器接收到Request请求逻辑再走一遍，只是最后的FinalRequestProcessor因为不是Leader接收到的，所以Leader的FinalRequestProcessor会直接退出，而Follower的则会回复发送Request请求的ZK客户端。
+
+### 4.1 Follower机器RequestProcessor链
+
+在分析Follower机器接收到ZK客户端的Request请求前有必要先了解一下其RequestProcessor处理链的关系，如下图：
+
+可以看到Follower的RequestProcessor相比Leader而言要简单不少，正式的RequestProcessor仅仅只有CommitProcessor和FinalRequestProcessor而已，FollowerRequestProcessorr和syncProcesso的作用都比较有限，接下来分析下各个RequestProcessor实现类的作用：
+
+**1、** FollowerRequestProcessor：该RequestProcessor执行的操作很简单，收到Request请求后首先调用nextProcessor对象，随后直接调用Follower对象发送REQUEST类型消息给集群Leader，消息包括了Request的消息内容；
+
+**2、** SyncRequestProcessor：同步刷新记录请求到日志，在将请求的日志同步到磁盘之前，不会把请求传递给下一个RequestProcessor；
+
+**3、** SendAckRequestProcessor：从名字就可以看出来该RequestProcessor和Leader处理链中的AckRequestProcessor十分类似，AckRequestProcessor是直接通知Leader本机器已经ACK，而本对象则是直接发送ACK类型的消息给对应的LearnerHandler对象从而通知Leader机器本机器已经ACK；
+
+**4、** CommitProcessor：当ProposalRequestProcessor调用到本对象时将会阻塞，直到本机器的Leader或者Learner角色处理完请求数据的同步后，提交了请求，才会把Request请求交给下一个RequestProcessor对象；
+
+**5、** FinalRequestProcessor：为RequestProcessor的末尾处理类，从名字也能看出来，基本上所有的请求都会最后经过这里此类将会处理改动记录以及session记录，如果ServerCnxn连接对象为空则直接退出，否则会根据请求的操作类型更新对象的ServerCnxn对象并回复请求的客户端；
+
+### 4.2 Follower接收Request请求并通过Leader同步数据
+
+Follower接收到Request请求有点特殊，由于ZK集群的特性是以Leader为中心的，因此ZK客户端传过来的Request请求都必须经过Leader机器，并由Leader发送消息同步到各个机器。
+
+当Leader接收到Request请求后就进入了熟悉的流程：Leader接收到ZK客户端的Request请求处理流程。因此Follower接收到ZK客户端的请求后把请求数据发给Leader后就相当于又进入了刚刚分析过的Leader接收到Request请求处理流程中，只是最后的FinalRequestProcessor处理器，Leader是直接返回的，Follower是进行相应的处理回复的。
+
+大致流程图如下：
+
+相比Leader接收到Request请求，Follower的处理流程只多了一个阶段，即有四个阶段：
+
+- 第一阶段：Follower同步请求给Leader，Follower接收到ZK客户端的Request请求后，通过FollowerRequestProcessor将请求发送给对应的LearnerHandler，并进入Leader机器处理Request请求流程；
+- 第二阶段：发送数据同步消息，Leader接收到请求并向各个Follower发送PROPOSAL类型消息，消息包括数据包和Request请求对象，随后Leader对象进入ACK状态；
+- 第三阶段：ACK消息确认阶段，Follower接收到PROPOSAL类型消息保存到日志文件中后给Leader响应ACK类型消息；
+- 第四阶段：提交消息并完成请求响应，当Leader接收到半数ACK确认消息后便会向Follower发送COMMIT类型消息，本机器也会完成最后的Request处理响应。
+
+可以看到Follower接收到ZK客户端的请求和Leader接收实际上是差不多的处理流程，只是Follower接收多了一个同步请求到Leader的阶段而已，了解了Leader接收Request请求处理流程后再去看Follower接收处理流程将会简单很多。
+
+接下来详细分析一下其处理流程，从F4-F5的流程中会经过Leader接收Request请求处理流程，因此忽略，直接看上一节即可：
+
+**1、** F1流程：Follower机器接收到ZK客户端Request请求，并提交给FollowerZooKeeperServer对象处理，随后将会调用firstProcessor对象使用处理链处理请求；
+
+**2、** F2流程：FollowerRequestProcessor是Follower机器的第一个RequestProcessor对象，其首先会调用nextProcessor对象，后面将会调用Follower的request()方法向Leader机器的LearnerHandler对象发送REQUEST类型请求，包括了Request请求的信息；
+
+**3、** F3流程：FollowerRequestProcessor的下一个处理器是CommitProcessor，当执行到本流程时将会阻塞，直到本处理器接收到了Commit指令；
+
+**4、** F4流程：Follower对象将会封装ZK客户端的Request请求信息，随后发送给对应的LearnerHandler对象；
+
+**5、** L1流程：LeaderHandler将会把请求传给LeaderZooKeeperServer对象，类似于Leader接收ZK客户端请求后ServerCnxnFactory的实现类将其反序列化为Request对象，并将Request对象传给LeaderZooKeeperServer的流程后面开始Leader调用RequetProcessor链处理Request请求的流程了；
+
+**6、** F5流程：当Leader和Follower之间进行到上一节所述的Follower接收到COMMIT类型消息时将会进入F5流程，调用CommitProcessor的commit()方法，随后将会调用到最终处理请求的对象FinalReqeustProcessor中；
+
+**7、** F6流程：由于Request请求是本Follower接收的，因此请求将会包含cnxn连接对象，随后会根据类型进行相应的回复，而Leader机器的FinalReqeustProcessor处理器由于不是Leader接收的，因此cnxn连接对象为空，将会直接退出；
+
+只要熟悉了Leader接收Request请求并进行相应的响应后来分析Follower接收请求的流程是易如反掌的事，因为Follower接收请求的流程在我看来就是对Leader接收请求流程的包装而已，Follower实际不会参数数据同步的核心流程，只会被动的同步消息，真正体现出Leader和Follower的关系。
+
+## 5.ZK集群机器的心跳检测
+
+### 5.1 集群机器的心跳检测
+
+在上一篇分析Leader和Follower建立通信连接的流程中最后在Leader对象中提到了，Leader对象在lead()方法的最末尾有一个死循环来对集群内的各个机器进行心跳检测，如果集群内与超过半数的机器未响应则会跳出死循环重新进入选举流程。
+
+集群间的心跳检测十分简单，流程如下：
+
+就是简单的Leader向各个Follower发送消息，Follower接收到消息后再回应ping消息，其流程如下：
+
+**1、** P1流程：Leader在死循环内每隔tickTime/2便循环一次，，同时每隔tickTime则判断一遍是否超过半数的机器进行响应，并将tick+1；
+
+**2、** P2流程：LearnerHandler向Follower发送ping消息成功，且Follower接收到了Leader的ping类型消息；
+
+**3、** P3流程：Follower接收到ping消息后将本机器的session过期时间副本封装到ping类型消息体中同步给Leader；
+
+**4、** P4流程：LearnerHandler接收到了Follower的ping回应，更新tickOfNextAckDeadline为tick+syncLimit，同时判断tick是否小于tickOfNextAckDeadline，如果小于则说明是正常回应的，如果大于则说明对应的Follower失去连接，再循环的最后面会判断是否有超过半数的机器正常回应，如果没有则进入下一轮选举；
+
+集群间的心跳检测就这么简单，其中需要注意的是tickOfNextAckDeadline属性在LearnerHandler接收到对应Follower的任何消息后都会更新为tick+syncLimit，因为收到消息就代表机器是正常存活的。
+
+### 5.2 集群服务器和ZK客户端的心跳检测
+
+前面分析过单机ZK服务器和ZK客户端的心跳检测流程原理，但是集群ZK服务器和ZK客户端的心跳检测和单机的有少许的不一样：集群的ZK服务器session的过期时间都是由Leader来维护的，其它的Follower或者Observer只是保存一份session副本，每当进行集群间的ping消息交互时Learner角色便会将session副本同步给Leader机器；而单机ZK服务器可以把单台机器就当成Leader，并且无需进行同步给其它机器等集群操作，本机完成所有Leader的操作更方便理解一点。
+
+流程示意图如下：
+
+上图的流程看起来比较凌乱，因为有A、B、F、P、T和L六种不同角色的流程，但这个样子已经算是ZK集群对于ZK客户端session心跳检测的很简易流程图了。不要觉得复杂，上图中可以将其大致划分为三个不同功能块：
+
+**1、** session过期轮询功能块：本功能块包括了L1、T1和T2流程，主要功能为Leader机器创建SessionTrackerImpl并启动线程对象，随后该对象轮询session集合中已经过期的session，并将该session过期的信息发送给各个Follower；
+
+**2、** ZK客户端在ZK集群连接并创建session信息功能块：本功能块包括了A和B流程，A代表ZK客户端连接了Leader机器，B代表ZK客户端连接了Follower机器，如果是连接Leader则会创建实际的session对象，而连接Follower则会创建session快照信息；
+
+**3、** Follower同步session快照给Leader功能块：本功能块包括了P1和P2流程，本流程会随着集群间的心跳检测完成调用，在Follower回应ping消息时会将session快照同时发给Leader进行同步；
+
+了解了途中三个功能块的大致功能后便可以较为轻松的理解上图了，无非是Leader负责创建启动管理实际session集合的对象、ZK客户端连接机器并创建对应的session信息和Follower将本机的session快照同步给Leader而已。具体流程分析如下：
+
+**1、** A1和B1流程：ZooKeeper客户端随机挑选ZK集群串的某一机器进行连接；
+
+**2、** A2和B2流程：当Leader或者Follower的ServerCnxnFactory接收到连接请求后将会调用本机器的ZooKeeperServer处理连接请求；
+
+**3、** B3流程：在Leader中连接请求将会直接保存到实际保存session的集合中；
+
+**4、** F1流程：如果是Follower机器接收到连接请求后将会保存连接的session快照，如果是同步流程则会返回session快照；
+
+**5、** P1流程：接收到ping消息后从F1流程获取session快照；
+
+**6、** P2流程：将session快照写入到ping消息体中并同步给Leader机器；
+
+**7、** L1流程：Leader在和Follower建立通信连接时将会创建并启动Session管理线程对象；
+
+**8、** T1流程：Session管理线程对象将会一直轮询session集合，并将已经过期的session取出来生成一个类型为closeSession的Request请求；
+
+**9、** T2流程：通过处理Request请求流程中的发送PROPOSAL类型消息将Request请求发送给各个机器，各个机器接收到消息后进行相应的处理；
+
+至此本篇文章的任务基本完成，本篇介绍了集群中各个关键点的流程原理，鉴于内容过多，因此源码分析放到下几篇再来分析。

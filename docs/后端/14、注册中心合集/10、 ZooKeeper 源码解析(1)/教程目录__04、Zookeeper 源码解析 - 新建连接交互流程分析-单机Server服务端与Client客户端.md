@@ -1,0 +1,92 @@
+# 04、Zookeeper 源码解析 - 新建连接交互流程分析-单机Server服务端与Client客户端
+- 来源：https://ddkk.com/zhuanlan/registered/zookeeper/1/4.html
+- 分类：注册中心
+- 分组：教程目录
+## 一、交互重要组件及流程
+
+### 1.前话
+
+上一篇文章分析过ZK服务端的重要组件以及单机情况下的启动流程，了解了ZK的基本组成。如有兴趣的可以直接跳转至[（二）Zookeeper原理源码分析之单机Server服务端组件架构启动流程分析](/zhuanlan/registered/zookeeper/1/2.html)和[（三）Zookeeper原理源码分析之Client客户端重要组件架构组成](/zhuanlan/registered/zookeeper/1/3.html)。
+
+对于ZK在运行时有诸多疑问，ZK对于IO多路复用是如何使用的？Client端和Server端是通过什么方式实现了交互协议的？以及在ZK的运行过程中起到关键作用的组件和不同操作的交互流程又是怎样的？
+
+本篇文章将会从Client端、Server端的交互流程入手，先分析两端的交互流程以及重要组件，随后再仔细分析这些重要组件的作用及生效方式来解决上述的几个问题。需要注意的是交互操作分析的是新建连接，对于新建节点、ping以及关闭连接等的操作大致流程和新建是差不多的，只是内部的操作稍微有点变化而已，这些后续再来分析。
+
+注：本篇基于ZK版本3.4.8分析的，且需要对ZK的架构以及重要组件组成有一定的基础了解，当然先看完流程再去了解那些架构组件也行，但还是推荐先去了解Server端以及Client端的架构组件，因为本篇不会进行一些基础性的分析。
+
+### 2.交互流程
+
+对于ZK来说，Client和Server端的交互流程值得学习，无论是对于NIO或者Netty的使用，还是为了解决通信数据传递问题。
+
+本次交互流程只考虑正常连接情况，并且将其流程拆解为三步走，分别为：1、客户端发起连接Server端请求；2、Server端收到并处理响应Client端的连接请求；3、收到Server端的响应生成对应的响应事件触发本地的监听器。大致交互流程图如下：
+
+接下来看看三步走的具体详细交互流程图。
+
+#### 2.1 Client端发起连接
+
+三步走中的第一步具体详细流程图如下：
+
+在这个步骤中担任主要职责的便是SendThread，图中简单的把流程分为了11个步骤，这个图中如果看过了上两篇关于ZK服务和客户端端的重要组件便可以清晰都知道其大致作用，只是图中加入了NIO的一些类而已。接下来具体分析一下在各个步骤中的一些小细节：
+
+- C1：对应着Java应用程序传入链接串并实例化ZooKeeper类进行连接；
+- C2：说明ZooKeeper只是一个API类而已，实际和Server端的交互逻辑并不在这个类中，这个类只会封装或设置请求参数并交给ClientCnxn实际连接对象处理；
+- C3：这个步骤总的来说是初始化并启用SendThread和EventThread两个线程对象，SendThread线程负责轮询NIO事件和心跳检测，EventThread负责处理Server端响应的事件，在图中分为了四个步骤是为了更直观的看具体的操作以及大致作用；
+- C4：实际上有非常多的逻辑：更新并判断处理心跳检测时间、在刚开始的时候尝试第一次连接Server端服务、以及判断验证信息等。并且SendThread是一个线程对象，C4这个流程将会被反复调用，这也就是为什么途中有C4.1和C4.2了，C4.1对应C5、C6、和C7，而C4.2则对应C8那条链路的流程；
+- C5：为什么这里要说尝试第一次连接？因为在这个流程中会调用一次SocketChannel的连接方法connect，而SocketChannel在创建的时候就已经被设置为阻塞状态了，因此connect方法即使没有立即连上去，也会后续通过一个OP_CONNECT事件来通知，但也有几率第一次就连上去，虽然几率比较小，下面的C6和C7便是针对C5第一次没连接上而采取的措施；
+- C6：当第一次尝试连接没连上，后续NIO的Server端连上了Client端的Selector将会收到NIO事件OP_CONNECT，并获取到相应的SelectionKey和SocketChannel对象；
+- C7：获取到NIO的Socket后将会完成连接，并且生成对应的ConnectRequest和Packet对象放到outgoingQueue数组中以便下次开启OP_WRITE写事件后能够发送数据包；
+- C8：这个流程应该要从C3.3开始走起，当C7完成连接并且把数据包保存在outgoingQueue数组中时，将会开启OP_WRITE事件，此时SendThread循环时将可以通过Selector获取到这个写事件，从而进入C8流程判断为写操作；
+- C9：当确认进入写操作时将会把Packet取出来以便后续流程使用；
+- C10：调用C9流程拿出来的Packet对象的createBB()方法，将其序列化并存放到Packet对象中的ByteBuffer缓存对象中；
+- C11：使用获取到的SocketChannel对象将ByteBuffer缓存对象中的序列化数据发送至Server端，并随后继续判断outgoingQueue和Packet对象是否还有数据，如果有数据则保持OP_WRITE事件开启，否则关闭OP_WRITE，只进行监听Server端的数据。
+
+如果对NIO的交互流程有一定的了解，对于ZK为何要这样实现的应该能理解一二，如果对NIO交互流程不怎么熟悉的，也可以参照ZK的使用，自己写一个通信多路复用的Demo。
+
+#### 2.2 Server接收处理及响应
+
+三步走中的第二步Server端交互处理流程如下：
+
+从ZK系列的第二篇文章可以知道NIOServerCnxnFactory在ZK启动时也是以一个守护线程对象运行的，会一直通过Selector轮询是否有新的IO事件，如果有则根据IO事件类型进行相应的处理，接下来详细分析下其具体的交互流程：
+
+- S1：守护线程对象将会每隔1s使用Selector轮询是否有新的IO事件；
+- S2：当Client端调用了SocketChannel.connect()方法时，Selector将会收到OP_ACCEPT连接类型的NIO事件，并获取对应的SocketChannel和SelectionKey对象；
+- S3：当确认是OP_ACCEPT事件时，将会先判断是否到达最大连接数了，满足则不会创建新的连接对象，否则注册SocketChannel生成SelectionKey，并设置成OP_READ读模式，根据这两个对象创建NIO连接对象NIOServerCnxn；
+- S4：会将NIOServerCnxn和SelectionKey进行绑定，并将NIOServerCnxn添加到cnxns数组和ip-NIOServerCnxn对应关系的map对象ipMap，执行完该流程将会监听等待Client端后续的请求；
+- S5：执行到这个流程时说明Client端已经执行到了C11（即发送具体的连接请求）流程了，此时Server端将会收到来自Client端Socket的IO事件；
+- S6：前面收到的IO事件对应的SelectionKey操作类型是OP_READ，将会获取和其绑定的NIOServerCnxn对象；
+- S7：这一步会调用NIOServerCnxn对象的doIO()方法，这里面将会根据是否初始化来判断是读取连接请求还是普通的请求，当然在我们这个流程中读取的是连接请求；
+- S8：将接收到的ByteBuffer反序列化成ConnectRequest请求对象，并根据Server端的心跳间隔时间以及Client传过来的SessionTimeout过期时间做一个中和判断，得出session的过期时间，并利用前面获得的NIOServerCnxn以及sesion过期时间在SessionTracker中创建session并进行跟踪，后续在分析ping心跳检测操作时再详细分析；
+- S9：根据已有对象信息创建Request对象，这个对象代表Client的每次具体请求，请求的内容以及相关的session信息都会在这个类中，并且后续的RequestProcessor系列对象处理最小单元便是Request对象类型，调用下一个流程前会更新一波session的过期时间；
+- S10：这个流程的具体执行是在RequestProcessor处理器实现类PrepRequestProcessor中完成的，其也是一系列实现类中的第一个执行类，，主要完成的操作便是根据Request中的header对象操作类型type属性来创建对应的CreateSessionTxn对象；
+- S11：执行完S10后S11做的操作只有更新一下session失效时间，其它的流程在单机运行中并未起到很大作用；
+- S12：此时已经调用到了第二个RequestProcessor处理器SyncRequestProcessor中，这个处理器做的事情便是保存请求日志和运行快照，具体的处理细节后续看有机会再仔细分析一波；
+- S13：当完成对logDir位置进行日志新增时，将会调用到下一个RequestProcessor处理器FinalRequestProcessor中，在这里面完成最后的处理及响应；
+- S14：这个流程是同步的，并且在这个流程中也会刷新一次session过期时间，并刷新ZK的serverStatus和NIOServerCnxn的近期调用状态时间等；
+- S15：最后把session过期时间、sessionId以及生成的随机密码等序列化到ByteBuffer中，随后通过SocketChannel写入到IO通道中通知Client端。这是正常流程，还有一种便是响应太长导致一次性发不完便会再次使用NIO的Selector.select()方法处理自身产生的写事件，直到把响应全部写完。直到这个流程Server端的连接处理响应流程便全部走完。
+
+在跟踪这一次请求源码时ZK进行了多次刷新session过期时间，为什么ZK要在各个Request处理器中都进行一次刷新session过期时间呢？以并发量小的角度看这个问题可能会很不解，因为针对仅有一次的请求情况，各个处理器之间相当于是同步处理的，所以看起来没有那么大的必要；但如果ZK的并发量高了起来，单机部署的情况下除了SyncRequestProcessor调用FinalRequestProcessor是同步流程，其它的都是线程异步的，一个响应由ZooKeeperServer类调用到FinalRequestProcessor可能中间会相差比较长的时间，如果只在开始调用或者结束调用的地方进行session过期时间刷新，中途可能session追踪器便已经把那些过期时间短的session当做过期的处理了。
+
+当然上述只是我的猜测，ZK获取有更多的考量，其它方面的原因便需要后续对ZK的深入了解才能知道了。
+
+#### 2.3 Client端接收Server端响应
+
+三步走中的最后一步交互流程图如下：
+
+这个流程相对于前两步而言步骤不是很多，大致就两点：1、Client端监听收到响应；2、触发本地的监听器对发生的ZK事件进行处理。具体流程分析如下：
+
+- C1：这个步骤可以看成两个同时进行的步骤：C1.1为SendThread线程轮询Selector监听Server端是否有新的响应，C2.2为EventThread监听waitingEvents数组是否有等待事件处理，需要注意的是waitingEvents数组中的元素只会通过SendThread线程收到响应处理后添加进去，因此waitingEvents数组的来源可以看成就是SendThread添加的容易理解一点；
+- C2：只针对新建连接而言，这个步骤获取到的IO事件为OP_READ；
+- C3：判断IO事件的类型，将会进入doIO()方法读取SocketChannel的数据；
+- C4：使用前面读取到的ByteBuffer数据，反序列化成ConnectResponse对象；
+- C5：根据响应对象的属性设置心跳检测需要的属性，如readTimeout、connectTimeout和negotiatedSessionTimeout等，最后会根据KeeperState生成WatchedEvent对象；
+- C6：通过WatchedEvent的KeeperState更新session的状态；
+- C7：根据ClientWatchManager以及传入进来的WatchedEvent生成WatcherSetEventPair对象，保存了需要触发的监听器以及对应的响应事件；
+- C8：将WatcherSetEventPair添加到waitingEvents数组中，waitingEvents数组中的对象也有可能是Packet类型的对象；
+- C9：通过C1.2开始一直轮询waitingEvents数组，当完成C8之后，C9将可以轮询到事件对象WatcherSetEventPair并进行处理；
+- C10：如果event对象不是eventOfDeath（关闭EventThread线程对象标识）对象，则会判断是否为WatcherSetEventPair类型对象，如果是则遍历对象中的watcher对象，并传入事件对象WatchedEvent进行回调；否则会调用Packet中的AsyncCallback对象进行异步回调。
+
+截止到这里回调基本上就已经结束了，第三步无论是新建连接还是触发事件进行回调流程都是一样的，都是一直轮询waitingEvents数组，并判断类型调用相应的监听器。后续分析操作命令交互以及ping等操作时这一步都是通用的。
+
+## 二、重要源码分析
+
+原来是打算将新建连接的源码写在这下面的，但写完之后发现实在是太多了，没办法放在同一篇，因此分了两篇，有兴趣的可以跳转至下一篇[（五）Zookeeper原理源码分析之单机Server服务端与Client客户端新建连接交互流程源码分析](/zhuanlan/registered/zookeeper/1/5.html)阅读。

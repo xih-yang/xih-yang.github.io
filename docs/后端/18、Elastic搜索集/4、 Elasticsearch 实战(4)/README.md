@@ -1,0 +1,32 @@
+# DDKK 抓取结果
+
+- 入口：https://ddkk.com/zhuanlan/search/elasticsearch/4/index.html
+- 文章数：27
+
+- [Elasticsearch 实战(4) - 阅读指南](./教程目录__Elasticsearch 实战(4) - 阅读指南.md)
+- [01、ElasticSearch 实战：简介](./教程目录__01、ElasticSearch 实战：简介.md)
+- [02、ElasticSearch 实战：Docker安装ES](./教程目录__02、ElasticSearch 实战：Docker安装ES.md)
+- [03、ElasticSearch 实战：Docker安装Kibana](./教程目录__03、ElasticSearch 实战：Docker安装Kibana.md)
+- [04、ElasticSearch 实战：入门-_cat](./教程目录__04、ElasticSearch 实战：入门-_cat.md)
+- [05、ElasticSearch 实战：入门-put&amp;post新增数据](./教程目录__05、ElasticSearch 实战：入门-put&amp;post新增数据.md)
+- [06、ElasticSearch 实战：入门-get查询数据&amp;乐观锁字段](./教程目录__06、ElasticSearch 实战：入门-get查询数据&amp;乐观锁字段.md)
+- [07、ElasticSearch 实战：入门-put&amp;post修改数据](./教程目录__07、ElasticSearch 实战：入门-put&amp;post修改数据.md)
+- [08、ElasticSearch 实战：入门-删除数据&amp;bulk批量操作导入样本测试数据](./教程目录__08、ElasticSearch 实战：入门-删除数据&amp;bulk批量操作导入样本测试数据.md)
+- [09、ElasticSearch 实战：进阶-两种查询方式](./教程目录__09、ElasticSearch 实战：进阶-两种查询方式.md)
+- [10、ElasticSearch 实战：进阶-QueryDSL基本使用&amp;match_all](./教程目录__10、ElasticSearch 实战：进阶-QueryDSL基本使用&amp;match_all.md)
+- [11、ElasticSearch 实战：进阶-match全文检索](./教程目录__11、ElasticSearch 实战：进阶-match全文检索.md)
+- [12、ElasticSearch 实战：进阶-match_phrase短语匹配](./教程目录__12、ElasticSearch 实战：进阶-match_phrase短语匹配.md)
+- [13、ElasticSearch 实战：进阶-multi_match多字段匹配](./教程目录__13、ElasticSearch 实战：进阶-multi_match多字段匹配.md)
+- [14、ElasticSearch 实战：进阶-bool复合查询](./教程目录__14、ElasticSearch 实战：进阶-bool复合查询.md)
+- [15、ElasticSearch 实战：进阶-filter过滤](./教程目录__15、ElasticSearch 实战：进阶-filter过滤.md)
+- [16、ElasticSearch 实战：进阶-term查询](./教程目录__16、ElasticSearch 实战：进阶-term查询.md)
+- [17、ElasticSearch 实战：进阶-aggregations聚合分析](./教程目录__17、ElasticSearch 实战：进阶-aggregations聚合分析.md)
+- [18、ElasticSearch 实战：映射-mapping创建](./教程目录__18、ElasticSearch 实战：映射-mapping创建.md)
+- [19、ElasticSearch 实战：映射-添加新的字段映射](./教程目录__19、ElasticSearch 实战：映射-添加新的字段映射.md)
+- [20、ElasticSearch 实战：映射-修改映射&amp;数据迁移](./教程目录__20、ElasticSearch 实战：映射-修改映射&amp;数据迁移.md)
+- [21、ElasticSearch 实战：分词-分词&amp;安装ik分词](./教程目录__21、ElasticSearch 实战：分词-分词&amp;安装ik分词.md)
+- [22、ElasticSearch 实战：补充 - Vagrant 创建虚拟机 - 修改 linux 网络设置 &amp; 开启 root 密码访问](./教程目录__22、ElasticSearch 实战：补充 - Vagrant 创建虚拟机 - 修改 linux 网络设置 &amp; 开启 root 密码访问.md)
+- [23、ElasticSearch 实战：分词-自定义扩展词库](./教程目录__23、ElasticSearch 实战：分词-自定义扩展词库.md)
+- [24、ElasticSearch 实战：整合-SpringBoot整合high-level-client](./教程目录__24、ElasticSearch 实战：整合-SpringBoot整合high-level-client.md)
+- [25、ElasticSearch 实战：整合-SpringBoot整合high-level-client](./教程目录__25、ElasticSearch 实战：整合-SpringBoot整合high-level-client.md)
+- [26、ElasticSearch 实战：整合-测试复杂检索](./教程目录__26、ElasticSearch 实战：整合-测试复杂检索.md)

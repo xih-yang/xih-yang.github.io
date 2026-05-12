@@ -1,0 +1,105 @@
+# 02、Java 9 新特性 – 特性简介
+- 来源：https://ddkk.com/zhuanlan/java/java9/2.html
+- 分类：Java新特性
+- 分组：教程目录
+Java 9 ( 又称为 jdk 1.9 ) 是 Java 编程语言开发的主要版本。它的初始版本于 2017 年 9 月21 日发布
+
+按照今天的日期，也就是差不多一年前吧，但是，要知道，Java 10 都已经出来了…. 残废的 Java 9 ，大家还没用上，就开始过时了。
+
+## Java 9 的目标
+
+Java 9 版本的主要目标是
+
+**1、** 模块化JDK和Java标准版(JavaStandardEdition)，使得Java可以用在小型计算设备中；
+
+> 今天，我才牢牢记住了 Java SE 的全称，竟然是 Java Standard Edition
+
+**2、** 提高JDK和Java实现的整体安全性；
+
+**3、** 简化JAVASE和JavaEE平台上的Java代码库和大型应用程序的构建和维护过程；
+
+**4、** 设计和实现能够应用于JavaPlatform和JavaJDK上的标准模块系统；
+
+其实看这几个主要目标，Java 9 的最大的变更应该就是开始模块化…，
+
+这也导致了 Java 9 不突出的原因吧。毕竟 Java 开发人员日常使用 Java 9 的过程中，对模块化并没有明显的感知
+
+## Java 9 新特性
+
+Java 9 在以上 4 个目标的基础上做了大量的工作，可以对外称道的应该有 90+ 个，但是，大部分都是小修小改，不足道也。
+
+我们就介绍几个比较大一点的特性吧
+
+**1、** 模块化(Module)；
+
+这是首当其中的特性。毕竟这么大的版本，目标只是它。
+
+Java 中的模块 ( Module ) 是一种新的 Java 编程组件 ( Component ) ，是一个命名的 ( named )，自描述的代码和数据集合
+
+**2、** REPL(JShell)；
+
+REPL ，全称 Read Eval Print Loop ,中文 「 交互式解释器 」
+
+这对于我们 Java 开发者来说，应该是 Java 9 带来的最大的个性吧。我们终于可以像 Python 、 Ruby 和 Node.js 那样在 Shell 可见即可得的运行一些范例代码了
+
+**3、** HTTP/2客户端；
+
+HTTP/2 大行其道的今天，Java 开发者终于可以用上原生的 HTTP/2 Java 客户端了。
+
+新的HTTPClient API 支持 WebSockets 和 HTTP/2 Stream 以及服务器推送功能
+
+**4、** 增强JavaDocs；
+
+生成输出支持 HTML5 ，同时为生成的 API 文档提供搜索功能
+
+**5、** 增强JAR–多Java版本的JAR支持；
+
+增强JAR 格式，使得可以在单个 JAR 存档中同时存在多个特定于 Java 发行版的类文件
+
+**6、** 集合工厂方法；
+
+为List 、 Set 和 Map 等结构添加了新的静态工厂方法，用于创建这些集合的不可变实例。
+
+**7、** 接口允许私有方法(privatemethods)；
+
+增强了接口 ( interface ) 功能，可以在接口中包含私有的成员方法和私有的静态方法
+
+**8、** 改进ProcessAPI；
+
+改进API 来控制和管理操作系统进程
+
+**9、** 改进流(Stream)API；
+
+为了增强了安全性和健壮性 ， 对象数据序列化时允许对输入的流进行过滤
+
+**10、** try-with-resources语句改进；
+
+允许在try-with-resources 语句中为资源定义一个最终变量 ( finall )
+
+**11、** 增强@Deprecated注解；
+
+修改@Deprecated 注释，可以提供有关 API 状态和预期处置的更多信息
+
+**12、** 内部类允许使用「钻石操作符」(`<>`)；
+
+在匿名类中，如果参数的类型是可推断的，那么就允许使用 「 钻石操作符 」 `<>`
+
+**13、** 改进Optional类；
+
+为java.util.Optional 类添加了新的有用方法
+
+**14、** 多分辨率(Multiresolution)图像API；
+
+支持将具有不同分辨率的一组图像封装成单个多分辨率图像
+
+**15、** CompletableFutureAPI改进；
+
+使用ProcessHandle.onExit 方法退出进程时，CompletableFuture 类的异步机制可以执行一些操作 ( Action )
+
+**16、** 轻量级的JSON；
+
+Java 9 中引入了一个轻量级的 JSON API 用于编码和解码文档和数据流 ( data stream ) 为 JSON 格式
+
+**17、** 响应式流(ReactiveStreams)API支持；
+
+为了支持 Java 9 的响应式编程，Java SE 9 版本中引入了一个新的响应式流 ( Reactive Streams ) API

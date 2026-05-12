@@ -10,22 +10,14 @@ type SidebarItem = {
 }
 
 const docsRoot = path.resolve(__dirname, '..')
-const sectionOrder = ['知识点', '面试题', 'leetcode', 'AI', '私房推荐']
+const sectionOrder = ['知识点', '前端', '后端', 'AI', '私房推荐']
 const excludedPathPrefixes = [
   '前端/',
-  '面试题/前端/',
-  '知识点/前端/02现代前端框架生态/3.SSR全栈/Astro/',
-  '知识点/前端/02现代前端框架生态/3.SSR全栈/Next.js/',
-  '知识点/前端/02现代前端框架生态/3.SSR全栈/Nuxt.js/',
-  '知识点/前端/02现代前端框架生态/3.SSR全栈/Qwik City/',
-  '知识点/前端/02现代前端框架生态/3.SSR全栈/Remix/',
-  '知识点/前端/02现代前端框架生态/3.SSR全栈/Solid Start/',
-  '知识点/前端/02现代前端框架生态/3.SSR全栈/SvelteKit/'
 ]
 const sectionLabelMap: Record<string, string> = {
   知识点: '知识点',
-  面试题: '面试题',
-  leetcode: '刷题',
+  前端: '前端',
+  后端: '后端',
   AI: 'AI',
   私房推荐: '私房推荐'
 }
@@ -47,13 +39,6 @@ export default defineConfig({
     '面试题/前端/**',
     '知识点/前端/*.md',
     '知识点/前端/**/!(index).md',
-    '知识点/前端/02现代前端框架生态/3.SSR全栈/Astro/**',
-    '知识点/前端/02现代前端框架生态/3.SSR全栈/Next.js/**',
-    '知识点/前端/02现代前端框架生态/3.SSR全栈/Nuxt.js/**',
-    '知识点/前端/02现代前端框架生态/3.SSR全栈/Qwik City/**',
-    '知识点/前端/02现代前端框架生态/3.SSR全栈/Remix/**',
-    '知识点/前端/02现代前端框架生态/3.SSR全栈/Solid Start/**',
-    '知识点/前端/02现代前端框架生态/3.SSR全栈/SvelteKit/**'
   ],
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/icons/studio-logo.svg' }]
@@ -129,8 +114,8 @@ function buildSidebar() {
       text: '快速入口',
       items: [
         { text: '知识点', link: '/知识点/' },
-        { text: '面试题', link: '/面试题/' },
-        { text: '刷题', link: '/leetcode/' },
+        { text: '前端', link: '/前端/' },
+        { text: '后端', link: '/后端/' },
         { text: 'AI', link: '/AI/' },
         { text: '私房推荐', link: '/私房推荐/' }
       ]
@@ -225,9 +210,9 @@ function extractTitle(filePath: string, fallback: string) {
 function toLink(relativePath: string) {
   const normalized = `/${relativePath.replace(/\\/g, '/')}`
   if (normalized.endsWith('/index.md')) {
-    return normalized.slice(0, -'index.md'.length)
+    return encodeURI(normalized.slice(0, -'index.md'.length))
   }
-  return normalized.replace(/\.md$/, '')
+  return encodeURI(normalized.replace(/\.md$/, ''))
 }
 
 function isExcludedRelativePath(relativePath: string) {

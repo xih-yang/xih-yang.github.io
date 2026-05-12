@@ -1,0 +1,182 @@
+# 30、ElasticSearch 7.3 实战：ES7.X SQL新特性解析及使用Java api实现sql功能
+- 来源：https://ddkk.com/zhuanlan/search/elasticsearch/1/30.html
+- 分类：搜索引擎
+- 分组：教程目录
+## 一、ES7 sql新特性
+
+### 1.1 数据准备
+
+创建索引及映射
+
+建立价格、颜色、品牌、售卖日期 四个字段
+
+```java
+PUT /tvs
+```
+
+```java
+PUT /tvs/_mapping
+{
+  "properties": {
+    "price": {
+      "type": "long"
+    },
+    "color": {
+      "type": "keyword"
+    },
+    "brand": {
+      "type": "keyword"
+    },
+    "sold_date": {
+      "type": "date"
+    }
+  }
+}
+```
+
+插入数据
+
+```java
+POST /tvs/_bulk
+{"index":{}}
+{"price":1000,"color":"红色","brand":"长虹","sold_date":"2019-10-28"}
+{"index":{}}
+{"price":2000,"color":"红色","brand":"长虹","sold_date":"2019-11-05"}
+{"index":{}}
+{"price":3000,"color":"绿色","brand":"小米","sold_date":"2019-05-18"}
+{"index":{}}
+{"price":1500,"color":"蓝色","brand":"TCL","sold_date":"2019-07-02"}
+{"index":{}}
+{"price":1200,"color":"绿色","brand":"TCL","sold_date":"2019-08-19"}
+{"index":{}}
+{"price":2000,"color":"红色","brand":"长虹","sold_date":"2019-11-05"}
+{"index":{}}
+{"price":8000,"color":"红色","brand":"三星","sold_date":"2020-01-01"}
+{"index":{}}
+{"price":2500,"color":"蓝色","brand":"小米","sold_date":"2020-02-12"}
+```
+
+### 1.2 简单示例
+
+```java
+POST /_sql?format=txt
+{
+  "query": "SELECT * FROM tvs "
+}
+```
+
+返回类似于数据库的界面
+
+## 二、启动方式
+
+### 2.1 http请求
+
+```java
+POST /_sql?format=txt
+{
+  "query": "SELECT * FROM tvs "
+}
+```
+
+### 2.2 客户端启动
+
+elasticsearch-sql-cli.bat
+
+双击执行，在控制台输入`show tables;`即可查询到ES中所有的索引
+
+### 2.3 Java代码
+
+这种方式在下面会介绍
+
+## 三、显示方式
+
+上面的ES语句中可以看到`format = txt`，这个是控制返回结果为txt格式，当然也支持其他的格式。如下图所示
+
+可以简单的看下其他的格式，例如说`tsv`,以tab做分割的格式
+
+##
+
+例如说`csv`
+
+## 四、sql 翻译
+
+既然支持sql语句，那么底层是怎么运行的呢？ 实际上还是转换成query语句来执行，我们可以用`translate`来查看一下
+
+## 五、与其他DSL结合
+
+也可以与其他查询语句相结合使用，例如说，查询价格在1200~2000范围内的数据
+
+## 六、Java 代码实现sql功能
+
+### 6.1 免费试用sql功能
+
+如果要使用代码实现sql功能，对于ES来说就要收费了。必须具备白金版功能，没有的话 Java代码会报错`current license is non-compliant for [jdbc]`
+
+```java
+java.sql.SQLInvalidAuthorizationSpecException: current license is non-compliant for [jdbc]
+	at org.elasticsearch.xpack.sql.client.JreHttpUrlConnection$SqlExceptionType.asException(JreHttpUrlConnection.java:321)
+	at org.elasticsearch.xpack.sql.client.JreHttpUrlConnection.parserError(JreHttpUrlConnection.java:198)
+	at org.elasticsearch.xpack.sql.client.JreHttpUrlConnection.request(JreHttpUrlConnection.java:161)
+	at org.elasticsearch.xpack.sql.client.HttpClient.lambda$post$1(HttpClient.java:105)
+	at org.elasticsearch.xpack.sql.client.JreHttpUrlConnection.http(JreHttpUrlConnection.java:65)
+	at org.elasticsearch.xpack.sql.client.HttpClient.lambda$post$2(HttpClient.java:104)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at org.elasticsearch.xpack.sql.client.HttpClient.post(HttpClient.java:103)
+	at org.elasticsearch.xpack.sql.client.HttpClient.query(HttpClient.java:80)
+	at org.elasticsearch.xpack.sql.jdbc.JdbcHttpClient.query(JdbcHttpClient.java:68)
+	at org.elasticsearch.xpack.sql.jdbc.JdbcStatement.initResultSet(JdbcStatement.java:160)
+	at org.elasticsearch.xpack.sql.jdbc.JdbcStatement.execute(JdbcStatement.java:151)
+	at org.elasticsearch.xpack.sql.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:40)
+	at com.itheima.es.TestJdbc.main(TestJdbc.java:17)
+```
+
+当然我们可以免费试用一段时间
+
+kibana中管理 ==> 许可管理 ==> 开启白金版试用
+
+### 6.2 导入依赖
+
+```java
+    <dependency>
+        <groupId>org.elasticsearch.plugin</groupId>
+        <artifactId>x-pack-sql-jdbc</artifactId>
+        <version>7.3.0</version>
+    </dependency>
+    
+    <repositories>
+        <repository>
+            <id>elastic.co</id>
+            <url>https://artifacts.elastic.co/maven</url>
+        </repository>
+    </repositories>
+```
+
+### 6.3 Java代码
+
+```java
+    public static void main(String[] args) {
+        //1创建连接
+        try {
+            Connection connection = DriverManager.getConnection("jdbc:es://http://localhost:9200");
+            //2创建statement
+            Statement statement = connection.createStatement();
+            //3执行sql语句
+            ResultSet resultSet = statement.executeQuery("select * from tvs");
+            //4获取结果
+            while (resultSet.next()) {
+                String str = resultSet.getString**1、**  +","
+                        +resultSet.getString(2)+","
+                        +resultSet.getString(3)+","
+                        +resultSet.getString(4);
+                System.out.println(str);
+                System.out.println("======================================");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+```
+
+返回结果
+
+****

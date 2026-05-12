@@ -1,0 +1,33 @@
+# DDKK 抓取结果
+
+- 入口：https://ddkk.com/zhuanlan/search/solr/1/index.html
+- 文章数：28
+
+- [Solr 源码解析 - 阅读指南](./教程目录__Solr 源码解析 - 阅读指南.md)
+- [01、Solr4.8.0源码分析(1)之Solr的Servlet](./教程目录__01、Solr4.8.0源码分析(1)之Solr的Servlet.md)
+- [02、Solr4.8.0源码分析(2)之Solr的启动(一)](./教程目录__02、Solr4.8.0源码分析(2)之Solr的启动(一).md)
+- [03、Solr4.8.0源码分析(3)之index的线程池管理](./教程目录__03、Solr4.8.0源码分析(3)之index的线程池管理.md)
+- [04、Solr4.8.0源码分析(4)之Eclipse Solr调试环境搭建](./教程目录__04、Solr4.8.0源码分析(4)之Eclipse Solr调试环境搭建.md)
+- [05、Solr4.8.0源码分析(5)之查询流程分析总述](./教程目录__05、Solr4.8.0源码分析(5)之查询流程分析总述.md)
+- [06、Solr4.8.0源码分析(6)之非排序查询](./教程目录__06、Solr4.8.0源码分析(6)之非排序查询.md)
+- [07、Solr4.8.0源码分析(7)之Solr SPI](./教程目录__07、Solr4.8.0源码分析(7)之Solr SPI.md)
+- [08、Solr4.8.0源码分析(8)之Lucene的索引文件(1)](./教程目录__08、Solr4.8.0源码分析(8)之Lucene的索引文件(1).md)
+- [09、Solr4.8.0源码分析(9)之Lucene的索引文件(2)](./教程目录__09、Solr4.8.0源码分析(9)之Lucene的索引文件(2).md)
+- [10、Solr4.8.0源码分析(10)之Lucene的索引文件(3)](./教程目录__10、Solr4.8.0源码分析(10)之Lucene的索引文件(3).md)
+- [11、Solr4.8.0源码分析(11)之Lucene的索引文件(4)](./教程目录__11、Solr4.8.0源码分析(11)之Lucene的索引文件(4).md)
+- [12、Solr4.8.0源码分析(12)之Lucene的索引文件(5)](./教程目录__12、Solr4.8.0源码分析(12)之Lucene的索引文件(5).md)
+- [13、Solr4.8.0源码分析(13)之LuceneCore的索引修复](./教程目录__13、Solr4.8.0源码分析(13)之LuceneCore的索引修复.md)
+- [14、Solr4.8.0源码分析(14)之SolrCloud索引深入(1)](./教程目录__14、Solr4.8.0源码分析(14)之SolrCloud索引深入(1).md)
+- [15、Solr4.8.0源码分析(15) 之 SolrCloud索引深入(2)](./教程目录__15、Solr4.8.0源码分析(15) 之 SolrCloud索引深入(2).md)
+- [16、Solr4.8.0源码分析(16)之SolrCloud索引深入(3)](./教程目录__16、Solr4.8.0源码分析(16)之SolrCloud索引深入(3).md)
+- [17、Solr4.8.0源码分析(17)之SolrCloud索引深入(4)](./教程目录__17、Solr4.8.0源码分析(17)之SolrCloud索引深入(4).md)
+- [18、Solr4.8.0源码分析(18)之缓存机制(一)](./教程目录__18、Solr4.8.0源码分析(18)之缓存机制(一).md)
+- [19、Solr4.8.0源码分析(19)之缓存机制(二)](./教程目录__19、Solr4.8.0源码分析(19)之缓存机制(二).md)
+- [20、Solr4.8.0源码分析(20)之SolrCloud的Recovery策略(一)](./教程目录__20、Solr4.8.0源码分析(20)之SolrCloud的Recovery策略(一).md)
+- [21、Solr4.8.0源码分析(21)之SolrCloud的Recovery策略(二)](./教程目录__21、Solr4.8.0源码分析(21)之SolrCloud的Recovery策略(二).md)
+- [22、Solr4.8.0源码分析(22)之SolrCloud的Recovery策略(三)](./教程目录__22、Solr4.8.0源码分析(22)之SolrCloud的Recovery策略(三).md)
+- [23、Solr4.8.0源码分析(23)之SolrCloud的Recovery策略(四)](./教程目录__23、Solr4.8.0源码分析(23)之SolrCloud的Recovery策略(四).md)
+- [24、Solr4.8.0源码分析(24)之SolrCloud的Recovery策略(五)](./教程目录__24、Solr4.8.0源码分析(24)之SolrCloud的Recovery策略(五).md)
+- [25、Solr4.8.0源码分析(25)之SolrCloud的Split流程](./教程目录__25、Solr4.8.0源码分析(25)之SolrCloud的Split流程.md)
+- [26、Solr4.8.0源码分析(26)之Recovery失败造成的宕机原因分析](./教程目录__26、Solr4.8.0源码分析(26)之Recovery失败造成的宕机原因分析.md)
+- [27、Solr4.8.0源码分析(27)之ImplicitDocRouter和CompositeIdRouter](./教程目录__27、Solr4.8.0源码分析(27)之ImplicitDocRouter和CompositeIdRouter.md)

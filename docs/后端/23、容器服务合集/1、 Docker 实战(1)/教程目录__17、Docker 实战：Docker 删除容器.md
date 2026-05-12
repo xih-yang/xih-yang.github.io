@@ -1,0 +1,12 @@
+# 17、Docker 实战：Docker 删除容器
+- 来源：https://ddkk.com/zhuanlan/container/docker/1/17.html
+- 分类：容器服务
+- 分组：教程目录
+可以使用 docker rm 来删除一个处于终止状态的容器。 例如
+
+```sh
+$sudo docker rm  trusting_newton
+trusting_newton
+```
+
+如果要删除一个运行中的容器，可以添加 -f 参数。Docker 会发送 SIGKILL 信号给容器。

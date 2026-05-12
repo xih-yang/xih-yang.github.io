@@ -1,0 +1,15 @@
+# 80、HBase异步管理
+- 来源：https://ddkk.com/zhuanlan/bigdata/hbase/80.html
+- 分类：大数据框架
+- 分组：教程目录
+## HBase异步管理
+
+您可以从ConnectionFactory中获取一个AsyncConnectionfrom，然后从中获取一个AsyncAdmin实例来访问HBase。请注意，有两种getAdmin方法来获取AsyncAdmin实例。一种方法有一个额外的线程池参数用于执行回调。它是为普通用户设计的。另一种方法不需要线程池，并且所有的回调函数都在框架线程中执行，所以不允许在回调中耗费时间。它专为高级用户设计。
+
+默认的getAdmin方法将返回一个使用默认配置的AsyncAdmin实例。如果你想定制一些配置，你可以使用getAdminBuilder方法为创建AsyncAdmin实例来获得AsyncAdminBuilder。用户可以自由设置他们关心的配置来创建一个新的AsyncAdmin实例。
+
+对于AsyncAdmin接口，大多数方法与旧的Admin界面有相同的含义，期望返回值通常是用CompletableFuture包装的。
+
+对于大多数管理员操作，当返回的CompletableFuture完成时，这意味着管理操作也已完成。但对于紧凑型操作而言，这只表示紧凑的请求已发送给HBase，可能需要一些时间才能完成紧凑操作。对于rollWALWriter方法，它只意味着rollWALWriter请求已发送到区域服务器，可能需要一些时间才能完成rollWALWriter操作。
+
+对于区域名称，我们只接受byte[]作为参数类型，它可能是完整的区域名称或编码的区域名称。对于服务器名称，我们只接受ServerName作为参数类型。对于表名，我们只接受TableName作为参数类型。对于list*操作，我们只接受Pattern作为参数类型，如果你想做正则表达式匹配。

@@ -1,0 +1,29 @@
+# 2.4 configEngine(..)
+- 来源：https://ddkk.com/zhuanlan/orm/jfinal/15.html
+- 分类：ORM框架
+- 分组：2 JFinalConfig
+此方法用来配置Template Engine，以下是代码示例：
+
+```java
+public void configEngine(Engine me) {
+    me.addSharedFunction("/view/common/layout.html");
+    me.addSharedFunction("/view/common/paginate.html");
+    me.addSharedFunction("/view/admin/common/layout.html");
+}
+```
+
+上面的方法向模板引擎中添加了三个定义了 template function 的模板文件，更详细的介绍详见 Template Engine 那一章节的内容。
+
+**注意**：me.setToClassPathSourceFactory()、me.setBaseTemplatePath(...)、me.setDevMode(...) 这三个配置要放在最前面，因为后续的 me.addSharedFunction(...) 等配置对前面三个配置有依赖。
+
+**jfinal 4.9.02 新增配置**，可支持中文表达式、变量名、方法名、模板函数名：
+
+```java
+Engine.setChineseExpression(true);
+```
+
+注意该配置要放在 addSharedTemplateFunction(...) 与 addSqlTemplate(...) 之前，以免生效时机太晚。该配置为全局配置，对所有 Engine 都有效。
+
+> 版权声明：「DDKK.COM 弟弟快看，程序员编程资料站」本站文章，版权归原作者所有
+
+> JFinal 官方 | https://jfinal.com

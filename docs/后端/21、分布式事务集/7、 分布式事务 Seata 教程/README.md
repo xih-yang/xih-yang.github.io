@@ -1,0 +1,33 @@
+# DDKK 抓取结果
+
+- 入口：https://ddkk.com/zhuanlan/transaction/5/index.html
+- 文章数：28
+
+- [分布式事务 Seata 教程 - 阅读指南](./教程目录__分布式事务 Seata 教程 - 阅读指南.md)
+- [01、分布式事务 Seata 教程 - 安装seata1.4+nacos1.4](./教程目录__01、分布式事务 Seata 教程 - 安装seata1.4+nacos1.4.md)
+- [02、分布式事务 Seata 教程 - Spring Cloud 2集成nacos+openfeign](./教程目录__02、分布式事务 Seata 教程 - Spring Cloud 2集成nacos+openfeign.md)
+- [03、分布式事务 Seata 教程 - Spring Cloud 2集成Mybatis Plus](./教程目录__03、分布式事务 Seata 教程 - Spring Cloud 2集成Mybatis Plus.md)
+- [04、分布式事务 Seata 教程 - Spring Cloud 2集成Seata1.4](./教程目录__04、分布式事务 Seata 教程 - Spring Cloud 2集成Seata1.4.md)
+- [05、分布式事务 Seata 教程 - Seata参数配置详解](./教程目录__05、分布式事务 Seata 教程 - Seata参数配置详解.md)
+- [06、分布式事务 Seata 教程 - undo_log支持的多种序列化方式](./教程目录__06、分布式事务 Seata 教程 - undo_log支持的多种序列化方式.md)
+- [07、分布式事务 Seata 教程 - undo_log、global_table、branch_table、lock_table字段及作用详解](./教程目录__07、分布式事务 Seata 教程 - undo_log、global_table、branch_table、lock_table字段及作用详解.md)
+- [08、分布式事务 Seata 教程 - Nacos 2.0+Seata 1.4.2 集群模式搭建](./教程目录__08、分布式事务 Seata 教程 - Nacos 2.0+Seata 1.4.2 集群模式搭建.md)
+- [09、分布式事务 Seata 教程 - 事务分组原理及应用案例详解](./教程目录__09、分布式事务 Seata 教程 - 事务分组原理及应用案例详解.md)
+- [10、分布式事务 Seata 教程 - Seata之TCC模式入门案例](./教程目录__10、分布式事务 Seata 教程 - Seata之TCC模式入门案例.md)
+- [11、分布式事务 Seata 教程 - Seata1.4.2之AT模式执行流程解析](./教程目录__11、分布式事务 Seata 教程 - Seata1.4.2之AT模式执行流程解析.md)
+- [12、分布式事务 Seata 教程 - Seata之SQL语句限制](./教程目录__12、分布式事务 Seata 教程 - Seata之SQL语句限制.md)
+- [13、分布式事务 Seata 教程 - 分布式事务环境下数据库批量插入和批量更新操作](./教程目录__13、分布式事务 Seata 教程 - 分布式事务环境下数据库批量插入和批量更新操作.md)
+- [14、分布式事务 Seata 教程 - Seata源码分析之全局事务扫描器GlobalTransactionScanner](./教程目录__14、分布式事务 Seata 教程 - Seata源码分析之全局事务扫描器GlobalTransactionScanner.md)
+- [15、分布式事务 Seata 教程 - Seata源码分析之全局事务拦截器GlobalTransactionalInterceptor](./教程目录__15、分布式事务 Seata 教程 - Seata源码分析之全局事务拦截器GlobalTransactionalInterceptor.md)
+- [16、分布式事务 Seata 教程 - AT模式源码分析之开启全局事务](./教程目录__16、分布式事务 Seata 教程 - AT模式源码分析之开启全局事务.md)
+- [17、分布式事务 Seata 教程 - AT模式源码分析之数据源代理](./教程目录__17、分布式事务 Seata 教程 - AT模式源码分析之数据源代理.md)
+- [18、分布式事务 Seata 教程 - AT模式源码分析之一阶段本地分支事务](./教程目录__18、分布式事务 Seata 教程 - AT模式源码分析之一阶段本地分支事务.md)
+- [19、分布式事务 Seata 教程 - AT模式源码分析之二阶段全局提交](./教程目录__19、分布式事务 Seata 教程 - AT模式源码分析之二阶段全局提交.md)
+- [20、分布式事务 Seata 教程 - AT模式源码分析之二阶段全局回滚](./教程目录__20、分布式事务 Seata 教程 - AT模式源码分析之二阶段全局回滚.md)
+- [21、分布式事务 Seata 教程 - @GlobalLock注解使用场景及源码分析](./教程目录__21、分布式事务 Seata 教程 - @GlobalLock注解使用场景及源码分析.md)
+- [22、分布式事务 Seata 教程 - XA模式入门案例](./教程目录__22、分布式事务 Seata 教程 - XA模式入门案例.md)
+- [23、分布式事务 Seata 教程 - 会话存储模式](./教程目录__23、分布式事务 Seata 教程 - 会话存储模式.md)
+- [24、分布式事务 Seata 教程 - Seata集成Mybatis-Plus多数据源](./教程目录__24、分布式事务 Seata 教程 - Seata集成Mybatis-Plus多数据源.md)
+- [25、分布式事务 Seata 教程 - Seata压力测试](./教程目录__25、分布式事务 Seata 教程 - Seata压力测试.md)
+- [26、分布式事务 Seata 教程 - 分布式事务之CAP、BASE理论](./教程目录__26、分布式事务 Seata 教程 - 分布式事务之CAP、BASE理论.md)
+- [27、分布式事务 Seata 教程 - Cannot construct instance of `java.time.LocalDateTime`问题解决](./教程目录__27、分布式事务 Seata 教程 - Cannot construct instance of `java.time.LocalDateTime`问题解决.md)

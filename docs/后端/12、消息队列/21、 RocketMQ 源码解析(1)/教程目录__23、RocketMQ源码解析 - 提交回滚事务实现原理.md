@@ -1,0 +1,81 @@
+# 23、RocketMQ源码解析 - 提交回滚事务实现原理
+- 来源：https://ddkk.com/zhuanlan/mq/rocketmq/1/23.html
+- 分类：消息队列
+- 分组：教程目录
+本文将重点分析RocketMQ Broker如何处理事务消息提交、回滚命令，其核心实现就是根据commitlogOffset找到消息，如果是提交动作，就恢复原消息的主题与队列，再次存入commitlog文件进而转到消息消费队列，供消费者消费，然后将原预处理消息存入一个新的主题RMQ_SYS_TRANS_OP_HALF_TOPIC，代表该消息已被处理；回滚消息与提交事务消息不同的是，提交事务消息会将消息恢复原主题与队列，再次存储在commitlog文件中。源码入口：
+
+EndTransactionProcessor#processRequest
+
+```java
+OperationResult result = new OperationResult();
+if (MessageSysFlag.TRANSACTION_COMMIT_TYPE == requestHeader.getCommitOrRollback()) {        // @1
+result = this.brokerController.getTransactionalMessageService().commitMessage(requestHeader);    // @2
+      if (result.getResponseCode() == ResponseCode.SUCCESS) {  // @3
+      	  RemotingCommand res = checkPrepareMessage(result.getPrepareMessage(), requestHeader);    // @4
+          if (res.getCode() == ResponseCode.SUCCESS) {
+                MessageExtBrokerInner msgInner = endMessageTransaction(result.getPrepareMessage());     // @5
+                msgInner.setSysFlag(MessageSysFlag.resetTransactionValue(msgInner.getSysFlag(), requestHeader.getCommitOrRollback()));
+                msgInner.setQueueOffset(requestHeader.getTranStateTableOffset());
+                msgInner.setPreparedTransactionOffset(requestHeader.getCommitLogOffset());
+                msgInner.setStoreTimestamp(result.getPrepareMessage().getStoreTimestamp());    // @6
+                RemotingCommand sendResult = sendFinalMessage(msgInner);                              // @7
+                if (sendResult.getCode() == ResponseCode.SUCCESS) {             
+                    this.brokerController.getTransactionalMessageService().deletePrepareMessage(result.getPrepareMessage());    // @8
+                }
+                return sendResult;
+           }
+          return res;
+     }
+}
+```
+
+代码@1：如果请求为提交事务，进入事务消息提交处理流程。
+
+代码@2：提交消息，别被这名字误导了，该方法主要是根据commitLogOffset从commitlog文件中查找消息返回OperationResult实例。
+
+● private MessageExt prepareMessage ：消息对象。
+
+● private int responseCode：查找结果。
+
+● private String responseRemark ：错误提示。
+
+代码@3：如果成功查找到消息，则继续处理，否则返回给客户端，消息未找到错误信息。
+
+代码@4：验证消息必要字段。
+
+● 验证消息的生产组与请求信息中的生产者组是否一致。
+
+● 验证消息的队列偏移量（queueOffset）与请求信息中的偏移量是否一致。
+
+● 验证消息的commitLogOffset与请求信息中的CommitLogOffset是否一致。
+
+代码@5:调用endMessageTransaction方法，该方法主要的目的就是恢复事务消息的真实的主题、队列，并设置事务ID。
+
+代码@6：设置消息的相关属性，这一步应该直接在endMessageTransaction中实现就好，统一恢复原消息的数量，特别关注的是取消了事务相关的系统标记。
+
+代码@7：发送最终消息，其实现原理非常简单，调用MessageStore将消息存储在commitlog文件中，此时的消息，会被转发到原消息主题对应的消费队列，被消费者消费。
+
+代码@8：删除预处理消息(prepare)，其实是将消息存储在主题为：RMQ_SYS_TRANS_OP_HALF_TOPIC的主题中，代表这些消息已经被处理（提交或回滚）。
+
+上述就是事务消息提交的流程，事务回滚类似，接下来大概分析一下事务消息回滚的流程。
+
+EndTransactionProcessor#processRequest
+
+```java
+ else if (MessageSysFlag.TRANSACTION_ROLLBACK_TYPE == requestHeader.getCommitOrRollback()) {
+       result = this.brokerController.getTransactionalMessageService().rollbackMessage(requestHeader);    // @1
+       if (result.getResponseCode() == ResponseCode.SUCCESS) {
+            RemotingCommand res = checkPrepareMessage(result.getPrepareMessage(), requestHeader);
+            if (res.getCode() == ResponseCode.SUCCESS) {
+                this.brokerController.getTransactionalMessageService().deletePrepareMessage(result.getPrepareMessage());   // @2
+            }
+           return res;
+       }
+}
+```
+
+代码@1：回滚消息，其实内部就是根据commitlogOffset查找消息。
+
+代码@2：将消息存储在RMQ_SYS_TRANS_OP_HALF_TOPIC中，代表该消息已被处理，与提交事务消息不同的是，提交事务消息会将消息恢复原主题与队列，再次存储在commitlog文件中。
+
+事务消息在Broker服务端的提交回滚流程就介绍到这了。其核心实现就是根据commitlogOffset找到消息，如果是提交动作，就恢复原消息的主题与队列，再次存入commitlog文件进而转到消息消费队列，供消费者消费，然后将原预处理消息存入一个新的主题RMQ_SYS_TRANS_OP_HALF_TOPIC，代表该消息已被处理；回滚消息与提交事务消息不同的是，提交事务消息会将消息恢复原主题与队列，再次存储在commitlog文件中。

@@ -1,0 +1,33 @@
+# DDKK 抓取结果
+
+- 入口：https://ddkk.com/zhuanlan/container/kubernetes/6/index.html
+- 文章数：28
+
+- [Kubernetes - 实战(6) - 阅读指南](./教程目录__Kubernetes - 实战(6) - 阅读指南.md)
+- [01、Kubernetes - 实战：初识k8s 什么是kubernetes](./教程目录__01、Kubernetes - 实战：初识k8s 什么是kubernetes.md)
+- [02、Kubernetes - 实战：Pod(k8s最小单元)概念及网络通讯方式](./教程目录__02、Kubernetes - 实战：Pod(k8s最小单元)概念及网络通讯方式.md)
+- [03、Kubernetes - 实战：使用kubeadm部署k8s环境及常见报错解决方法](./教程目录__03、Kubernetes - 实战：使用kubeadm部署k8s环境及常见报错解决方法.md)
+- [04、Kubernetes - 实战：kubespray安装高可用k8sv1.20.2集群及常见报错解决](./教程目录__04、Kubernetes - 实战：kubespray安装高可用k8sv1.20.2集群及常见报错解决.md)
+- [05、Kubernetes - 实战：ETCD集群搭建及使用(https认证+数据备份恢复)](./教程目录__05、Kubernetes - 实战：ETCD集群搭建及使用(https认证+数据备份恢复).md)
+- [06、Kubernetes - 实战：kubectl常用命令总结](./教程目录__06、Kubernetes - 实战：kubectl常用命令总结.md)
+- [07、Kubernetes - 实战：搭建企业级私有仓库Harbor](./教程目录__07、Kubernetes - 实战：搭建企业级私有仓库Harbor.md)
+- [08、Kubernetes - 实战：Harbor仓库的几种高可用方案与搭建](./教程目录__08、Kubernetes - 实战：Harbor仓库的几种高可用方案与搭建.md)
+- [09、Kubernetes - 实战：Pod生命周期介绍（init Container）](./教程目录__09、Kubernetes - 实战：Pod生命周期介绍（init Container）.md)
+- [10、Kubernetes - 实战：Pod健康检查原理-探针（就绪检测、存活检测）](./教程目录__10、Kubernetes - 实战：Pod健康检查原理-探针（就绪检测、存活检测）.md)
+- [11、Kubernetes - 实战：Deployment、DaemonSet、Job、CronJob等各控制器介绍及演示](./教程目录__11、Kubernetes - 实战：Deployment、DaemonSet、Job、CronJob等各控制器介绍及演示.md)
+- [12、Kubernetes - 实战：Service介绍及演示](./教程目录__12、Kubernetes - 实战：Service介绍及演示.md)
+- [13、Kubernetes - 实战：Ingress-nginx介绍及演示](./教程目录__13、Kubernetes - 实战：Ingress-nginx介绍及演示.md)
+- [14、Kubernetes - 实战：ConfigMap介绍及演示](./教程目录__14、Kubernetes - 实战：ConfigMap介绍及演示.md)
+- [15、Kubernetes - 实战：Secret介绍及演示](./教程目录__15、Kubernetes - 实战：Secret介绍及演示.md)
+- [16、Kubernetes - 实战：存储卷Volume介绍及使用](./教程目录__16、Kubernetes - 实战：存储卷Volume介绍及使用.md)
+- [17、Kubernetes - 实战：持久化存储PV、PVC和StatefulSet介绍及使用](./教程目录__17、Kubernetes - 实战：持久化存储PV、PVC和StatefulSet介绍及使用.md)
+- [18、Kubernetes - 实战：一文详解Pod、Node调度规则(亲和性、污点、容忍、固定节点)](./教程目录__18、Kubernetes - 实战：一文详解Pod、Node调度规则(亲和性、污点、容忍、固定节点).md)
+- [19、Kubernetes - 实战：一文详解ServiceAccount及RBAC权限控制](./教程目录__19、Kubernetes - 实战：一文详解ServiceAccount及RBAC权限控制.md)
+- [20、Kubernetes - 实战：Kubernets包管理工具—&gt;Helm介绍与使用](./教程目录__20、Kubernetes - 实战：Kubernets包管理工具—&gt;Helm介绍与使用.md)
+- [21、Kubernetes - 实战：Dashboard安装及使用](./教程目录__21、Kubernetes - 实战：Dashboard安装及使用.md)
+- [22、Kubernetes - 实战：Prometheus-operator集群监控神器](./教程目录__22、Kubernetes - 实战：Prometheus-operator集群监控神器.md)
+- [23、Kubernetes - 实战：日志聚合分析系统—Loki的搭建与使用](./教程目录__23、Kubernetes - 实战：日志聚合分析系统—Loki的搭建与使用.md)
+- [24、Kubernetes - 实战：Apiserver等证书修改使用年限](./教程目录__24、Kubernetes - 实战：Apiserver等证书修改使用年限.md)
+- [25、Kubernetes - 实战：详解如何将CPU Manager做到游刃有余](./教程目录__25、Kubernetes - 实战：详解如何将CPU Manager做到游刃有余.md)
+- [26、Kubernetes - 实战：k8s pod挂载hostPath执行写时报错Permission denied](./教程目录__26、Kubernetes - 实战：k8s pod挂载hostPath执行写时报错Permission denied.md)
+- [27、Kubernetes - 实战：k8s 中应用GlusterFS类型StorageClass](./教程目录__27、Kubernetes - 实战：k8s 中应用GlusterFS类型StorageClass.md)

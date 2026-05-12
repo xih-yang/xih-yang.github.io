@@ -1,0 +1,32 @@
+# DDKK 抓取结果
+
+- 入口：https://ddkk.com/zhuanlan/search/solr/2/index.html
+- 文章数：27
+
+- [Solr 实战 - 阅读指南](./Solr 实战 (A)__Solr 实战 - 阅读指南.md)
+- [01、Solr：安装并设置开机自启](./Solr 实战 (A)__01、Solr：安装并设置开机自启.md)
+- [02、Solr：核心概念及solr-admin界面介绍](./Solr 实战 (A)__02、Solr：核心概念及solr-admin界面介绍.md)
+- [03、Solr：managed-schema标签详解](./Solr 实战 (A)__03、Solr：managed-schema标签详解.md)
+- [04、Solr：创建核心/索引/core](./Solr 实战 (A)__04、Solr：创建核心-索引-core.md)
+- [05、Solr：配置从mysql同步数据](./Solr 实战 (A)__05、Solr：配置从mysql同步数据.md)
+- [06、Solr：实现从mysql定时自动同步数据](./Solr 实战 (A)__06、Solr：实现从mysql定时自动同步数据.md)
+- [07、Solr：配置IK中文分词器](./Solr 实战 (A)__07、Solr：配置IK中文分词器.md)
+- [08、Solr：常用查询语法](./Solr 实战 (A)__08、Solr：常用查询语法.md)
+- [09、Solr：整合SolrJ实现客户端操作](./Solr 实战 (A)__09、Solr：整合SolrJ实现客户端操作.md)
+- [10、Solr：整合spring-data-solr实现客户端操作](./Solr 实战 (A)__10、Solr：整合spring-data-solr实现客户端操作.md)
+- [11、Solr：搭建solr集群并创建核心，设置数据同步](./Solr 实战 (A)__11、Solr：搭建solr集群并创建核心，设置数据同步.md)
+- [12、Solr：聚合分组查询｜嵌套分组指南](./Solr 实战 (A)__12、Solr：聚合分组查询｜嵌套分组指南.md)
+- [Solr之搭建Zookeeper集群并设置开机自启](./Solr 实战 (A)__Solr之搭建Zookeeper集群并设置开机自启.md)
+- [Sole之安装zookeeper可视化工具PrettyZoo、ZooKeeperAssistant](./Solr 实战 (A)__Sole之安装zookeeper可视化工具PrettyZoo、ZooKeeperAssistant.md)
+- [01、Solr：Solr 简介](./Solr 实战 (B)__01、Solr：Solr 简介.md)
+- [02、Solr：Solr 搜索原理](./Solr 实战 (B)__02、Solr：Solr 搜索原理.md)
+- [03、Solr：Solr 单机版安装](./Solr 实战 (B)__03、Solr：Solr 单机版安装.md)
+- [04、Solr：可视化管理界面](./Solr 实战 (B)__04、Solr：可视化管理界面.md)
+- [05、Solr：新建核心](./Solr 实战 (B)__05、Solr：新建核心.md)
+- [06、Solr：分词 Analysis](./Solr 实战 (B)__06、Solr：分词 Analysis.md)
+- [07、Solr：Dataimport](./Solr 实战 (B)__07、Solr：Dataimport.md)
+- [08、Solr：菜单项目 Documents 使用办法](./Solr 实战 (B)__08、Solr：菜单项目 Documents 使用办法.md)
+- [09、Solr：菜单项目 query 查询使用办法](./Solr 实战 (B)__09、Solr：菜单项目 query 查询使用办法.md)
+- [10、Solr：使用 SolrJ 操作 Solr](./Solr 实战 (B)__10、Solr：使用 SolrJ 操作 Solr.md)
+- [11、Solr：Spring Data for Apache Solr](./Solr 实战 (B)__11、Solr：Spring Data for Apache Solr.md)
+- [12、Solr：SolrCloud](./Solr 实战 (B)__12、Solr：SolrCloud.md)

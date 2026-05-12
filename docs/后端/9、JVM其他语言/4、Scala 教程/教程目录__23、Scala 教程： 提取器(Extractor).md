@@ -1,0 +1,91 @@
+# 23、Scala 教程： 提取器(Extractor)
+- 来源：https://ddkk.com/zhuanlan/java/scala/23.html
+- 分类：Scala 教程
+- 分组：教程目录
+**提取器** 是从传递给它的对象中提取出构造该对象的参数，其作用，可以根据某一规则，非常方便的获取到想要的值。
+
+Scala 提取器是一个带有 **unapply** 方法的对象。
+
+unapply 方法算是 **apply** 方法的反向操作： unapply接受一个对象，然后从对象中提取值，提取的值通常是用来构造该对象的值。
+
+我们用一个例子来了解 **提取器** 构造方式
+
+```java
+object Test {
+   def main(args: Array[String]) {
+      println ("Apply 方法 : " + apply("penglei", "gmail.com"));
+      println ("Unapply 方法 : " + unapply("penglei@gmail.com"));
+      println ("Unapply 方法 : " + unapply("penglei Ali"));
+   }
+   // 注入方法 (可选)
+   def apply(user: String, domain: String) = {
+      user +"@"+ domain
+   }
+   // 提取方法（必选）
+   def unapply(str: String): Option[(String, String)] = {
+      val parts = str split "@"
+      if (parts.length == 2){
+         Some(parts(0), parts(1)) 
+      }else{
+         None
+      }
+   }
+}
+```
+
+上面代码执行结果为：
+
+```java
+Apply 方法 : penglei@gmail.com
+Unapply 方法 : Some((penglei,gmail.com))
+Unapply 方法 : None
+```
+
+以上对象定义了两个方法： **apply** 和 **unapply** 方法。 通过 apply 方法我们无需使用 new 操作就可以创建对象。
+
+因此可以通过语句 Test(“penglei”, “gmail.com”) 来构造一个字符串 “penglei@gmail.com”。
+
+unapply方法算是apply方法的反向操作：unapply接受一个对象，然后从对象中提取值，提取的值通常是用来构造该对象的值。范例中我们使用 Unapply 方法从对象中提取用户名和邮件地址的后缀。
+
+范例中unapply 方法在传入的字符串不是邮箱地址时返回 None。代码演示如下：
+
+```java
+unapply("penglei@gmail.com") 相等于 Some("penglei", "gmail.com")
+unapply("penglei Ali") 相等于 None
+```
+
+## 提取器使用模式匹配
+
+我们范例化一个类的时，可以带上0个或者多个的参数，这时候编译器会调用 apply 方法。
+
+因此我们可以在类和对象中都定义 apply 方法。
+
+就像我们之前提到过的，unapply 用于提取我们指定查找的值，它与 apply 的操作相反。 当我们在提取器对象中使用 **match** 语句是，unapply 将自动执行
+
+**unapply** 方法的返回值是一个 **Option** 类型，也就是要么是 Some[T]，要么是 None
+
+如下所示：
+
+```java
+object Test {
+   def main(args: Array[String]) {
+      val x = Test(5)
+      println(x)
+      x match
+      {
+         case Test(num) => println(x + " 是 " + num + " 的四倍！")
+         //unapply 被调用
+         case _ => println("无法计算")
+      }
+   }
+   def apply(x: Int) = x*4
+   def unapply(z: Int): Option[Int] = if (z%4==0) Some(z/4) else None
+}
+```
+
+上面代码执行结果为：
+
+```java
+20
+20 是 5 的两倍！
+```

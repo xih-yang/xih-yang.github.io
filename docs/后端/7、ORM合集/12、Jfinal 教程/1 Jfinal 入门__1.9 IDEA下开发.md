@@ -1,0 +1,31 @@
+# 1.9 IDEA下开发
+- 来源：https://ddkk.com/zhuanlan/orm/jfinal/9.html
+- 分类：ORM框架
+- 分组：1 Jfinal 入门
+## 1､热加载
+
+由于jfinal-undertow 与 jetty-server 的热加载都是通过监控 class 文件是否被更新而触发的，但 IDEA 默认不支持自动编译，所以其 class 文件在开发过程中不会被更新。因此，在 IDEA 下默认不支持热加载，可以在网上找一找开启 IDEA 自动编译的配置来支持，下面给出几个这类资源：
+
+[https://jfinal.com/share/2541](https://jfinal.com/share/2541)
+
+[https://jfinal.com/share/2434](https://jfinal.com/share/2434)
+
+[https://my.oschina.net/fdblog/blog/172229](https://my.oschina.net/fdblog/blog/172229)
+
+[https://jfinal.com/share/1357](https://jfinal.com/share/1357)
+
+也可以使用Shift + F9的快捷键启动，在修改代码后，再使用Ctrl + F5的方式重启，此方式比用传统的 maven jetty plugin要快速，注意使用 Ctrl + F5重启前需要使用Alt + 5 将焦点转向debug窗。IDEA下开发尽量使用快捷键，避免使用鼠标，将极大提升开发率。
+
+## 2、多模块
+
+在jfinal undertow 之下使用 maven 多模块开发，有跨模块加载资源的需求，可以参考这里：
+
+[http://www.jfinal.com/share/1285](http://www.jfinal.com/share/1285)
+
+## 3、IDEA 下模板文件路径不正确
+
+详见：[https://jfinal.com/doc/1-5](https://jfinal.com/doc/1-5)
+
+> 版权声明：「DDKK.COM 弟弟快看，程序员编程资料站」本站文章，版权归原作者所有
+
+> JFinal 官方 | https://jfinal.com

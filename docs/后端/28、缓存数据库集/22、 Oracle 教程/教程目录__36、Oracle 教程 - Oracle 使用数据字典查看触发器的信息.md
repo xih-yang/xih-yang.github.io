@@ -1,0 +1,302 @@
+# 36、Oracle 教程 - Oracle 使用数据字典查看触发器的信息
+- 来源：https://ddkk.com/zhuanlan/db/oracle/1/36.html
+- 分类：缓存数据库
+- 分组：教程目录
+## 一、使用 USER_TRIGGERS 查看当前用户所拥有的触发器信息
+
+### 1、数据字典的结构
+
+```java
+SQL> DESC USER_TRIGGERS;
+ Name										     Null?    Type
+------------------------------ -------- ---------------------------------------------------
+ TRIGGER_NAME									      VARCHAR2(30)
+ TRIGGER_TYPE									      VARCHAR2(16)
+ TRIGGERING_EVENT								      VARCHAR2(227)
+ TABLE_OWNER									      VARCHAR2(30)
+ BASE_OBJECT_TYPE								      VARCHAR2(16)
+ TABLE_NAME										      VARCHAR2(30)
+ COLUMN_NAME									      VARCHAR2(4000)
+ REFERENCING_NAMES								      VARCHAR2(128)
+ WHEN_CLAUSE									      VARCHAR2(4000)
+ STATUS 										      VARCHAR2(8)
+ DESCRIPTION									      VARCHAR2(4000)
+ ACTION_TYPE									      VARCHAR2(11)
+ TRIGGER_BODY									      LONG
+ CROSSEDITION									      VARCHAR2(7)
+ BEFORE_STATEMENT								      VARCHAR2(3)
+ BEFORE_ROW										      VARCHAR2(3)
+ AFTER_ROW										      VARCHAR2(3)
+ AFTER_STATEMENT								      VARCHAR2(3)
+ INSTEAD_OF_ROW 								      VARCHAR2(3)
+ FIRE_ONCE										      VARCHAR2(3)
+ APPLY_SERVER_ONLY								      VARCHAR2(3)
+```
+
+### 2、查看当前用户的触发器信息
+
+```java
+SQL> SELECT TRIGGER_NAME,TRIGGER_TYPE,TABLE_OWNER,TABLE_NAME,COLUMN_NAME,AFTER_ROW,BEFORE_ROW FROM USER_TRIGGERS;
+TRIGGER_NAME	  TRIGGER_TYPE	TABLE_OWNER	  TABLE_NAME	COLUMN_NAME     AFT BEF
+------------------------------ ---------------- ------------------------------ -------------------
+T_UPDATE_DEPT	  AFTER EACH ROW	SCOTT		    DEPT		    	    NO	NO
+T_UPDATE_EMP	  AFTER EACH ROW	SCOTT		    EMP				        NO	NO
+T_DEL_EMP		  BEFORE EACH ROW	SCOTT		    EMP				        NO	NO
+```
+
+## 二、使用 ALL_TRIGGERS 查看当前用户能够访问的触发器信息
+
+### 1、数据字典的结构
+
+```java
+SQL> DESC ALL_TRIGGERS;
+ Name										     Null?    Type
+-------------------------------------------------------------------------------
+ OWNER											      VARCHAR2(30)
+ TRIGGER_NAME									      VARCHAR2(30)
+ TRIGGER_TYPE									      VARCHAR2(16)
+ TRIGGERING_EVENT								      VARCHAR2(227)
+ TABLE_OWNER									      VARCHAR2(30)
+ BASE_OBJECT_TYPE								      VARCHAR2(16)
+ TABLE_NAME										      VARCHAR2(30)
+ COLUMN_NAME									      VARCHAR2(4000)
+ REFERENCING_NAMES								      VARCHAR2(128)
+ WHEN_CLAUSE									      VARCHAR2(4000)
+ STATUS 										      VARCHAR2(8)
+ DESCRIPTION									      VARCHAR2(4000)
+ ACTION_TYPE									      VARCHAR2(11)
+ TRIGGER_BODY									      LONG
+ CROSSEDITION									      VARCHAR2(7)
+ BEFORE_STATEMENT								      VARCHAR2(3)
+ BEFORE_ROW										      VARCHAR2(3)
+ AFTER_ROW										      VARCHAR2(3)
+ AFTER_STATEMENT								      VARCHAR2(3)
+ INSTEAD_OF_ROW 								      VARCHAR2(3)
+ FIRE_ONCE										      VARCHAR2(3)
+ APPLY_SERVER_ONLY								      VARCHAR2(3)
+```
+
+### 2、查看当前用户能够访问的触发器信息
+
+```java
+SQL> SELECT OWNER,TRIGGER_NAME,TRIGGER_TYPE,TABLE_NAME,COLUMN_NAME,AFTER_ROW,BEFORE_ROW FROM ALL_TRIGGERS;
+OWNER	   TRIGGER_NAME 		  TRIGGER_TYPE	           TABLE_NAME	 COLUMN_NAME	  AFT BEF
+---------- ------------------------------ ---------------- -------------- --------------- --- ---
+XDB	       XDB_PV_TRIG			          INSTEAD OF	   PATH_VIEW					  NO  NO
+XDB	       XDB_RV_TRIG			          INSTEAD OF	   RESOURCE_VIEW				  NO  NO
+XDB	       XDB$ACL$xd			          AFTER EACH ROW   XDB$ACL					      NO  NO
+XDB	       XDB$RESCONFIG$xd		          AFTER EACH ROW   XDB$RESCONFIG				   NO  NO
+MDSYS	   SDO_TOPO_TRIG_INS1		      INSTEAD OF	   SDO_TOPO_TRANSACT_DATA$		   NO  NO
+MDSYS	   SDO_UNITS_OF_MEASURE_TRIGGER   AFTER STATEMENT  SDO_UNITS_OF_MEASURE 		    NO  NO
+MDSYS	   OGIS_CRS_DELETE_TRIGGER	      BEFORE EACH ROW  OGIS_SPATIAL_REFERENCE_SYSTEMS	NO  NO
+MDSYS	   OGIS_CRS_INSERT_TRIGGER	      BEFORE EACH ROW  OGIS_SPATIAL_REFERENCE_SYSTEMS	NO  NO
+MDSYS	   SDO_COORD_OPS_TRIGGER	      BEFORE EACH ROW  SDO_COORD_OPS				   NO  NO
+MDSYS	   SDO_COORD_OP_METHODS_TRIGGER   BEFORE EACH ROW  SDO_COORD_OP_METHODS 		    NO  NO
+MDSYS	   SDO_COORD_OP_PARAM_VAL_TRIGG2  AFTER STATEMENT  SDO_COORD_OP_PARAM_VALS		    NO  NO
+MDSYS	   SDO_COORD_OP_PARAM_VAL_TRIGGER AFTER EACH ROW   SDO_COORD_OP_PARAM_VALS		    NO  NO
+MDSYS	   SDO_COORD_OP_PATHS_TRIGGER	  BEFORE EACH ROW  SDO_COORD_OP_PATHS			   NO  NO
+MDSYS	   SDO_COORD_REF_SRID_UPDATE	  AFTER EACH ROW   SDO_COORD_REF_SYS			   NO  NO
+MDSYS	   SDO_CRS_DELETE_TRIGGER	      INSTEAD OF	   SDO_COORD_REF_SYSTEM 		   NO  NO
+MDSYS	   SDO_CRS_INSERT_TRIGGER	      INSTEAD OF	   SDO_COORD_REF_SYSTEM 		   NO  NO
+MDSYS	   SDO_CS_SRS_SRID_UPDATE	      AFTER EACH ROW   SDO_CS_SRS					  NO  NO
+MDSYS	   SDO_FEATURE_USAGE_UPDATE	      AFTER EACH ROW   SDO_FEATURE_USAGE			  NO  NO
+MDSYS	   CS_SRS_TRIGGER		          INSTEAD OF	   CS_SRS					    NO  NO
+MDSYS	   SDO_ANNOT_TRIG_INS1		      INSTEAD OF	   USER_ANNOTATION_TEXT_METADATA  NO  NO
+MDSYS	   SDO_GEOM_TRIG_UPD1	    	  INSTEAD OF	   USER_SDO_GEOM_METADATA		 NO  NO
+MDSYS	   SDO_GEOM_TRIG_DEL1		      INSTEAD OF	   USER_SDO_GEOM_METADATA		 NO  NO
+MDSYS	   SDO_GEOM_TRIG_INS1	    	  INSTEAD OF	   USER_SDO_GEOM_METADATA		 NO  NO
+MDSYS	   SDO_GEOR_TRIG_UPD1		      INSTEAD OF	   USER_SDO_GEOR_SYSDATA		 NO  NO
+MDSYS	   SDO_GEOR_TRIG_DEL1		      INSTEAD OF	   USER_SDO_GEOR_SYSDATA		 NO  NO
+MDSYS	   SDO_GEOR_TRIG_INS1	    	  INSTEAD OF	   USER_SDO_GEOR_SYSDATA		 NO  NO
+MDSYS	   SDO_LRS_TRIG_UPD	        	  INSTEAD OF	   USER_SDO_LRS_METADATA		 NO  NO
+MDSYS	   SDO_LRS_TRIG_DEL		          INSTEAD OF	   USER_SDO_LRS_METADATA		 NO  NO
+MDSYS	   SDO_LRS_TRIG_INS		          INSTEAD OF	   USER_SDO_LRS_METADATA		 NO  NO
+MDSYS	   SDO_NETWORK_CONS_UPD_TRIG	  INSTEAD OF	   USER_SDO_NETWORK_CONSTRAINTS   NO  NO
+MDSYS	   SDO_NETWORK_CONS_DEL_TRIG	  INSTEAD OF	   USER_SDO_NETWORK_CONSTRAINTS   NO  NO
+MDSYS	   SDO_NETWORK_CONS_INS_TRIG	  INSTEAD OF	   USER_SDO_NETWORK_CONSTRAINTS   NO  NO
+MDSYS	   SDO_NETWORK_HIS_DEL_TRIG	      INSTEAD OF	   USER_SDO_NETWORK_HISTORIES	  NO  NO
+MDSYS	   SDO_NETWORK_HIS_UPD_TRIG	      INSTEAD OF	   USER_SDO_NETWORK_HISTORIES	  NO  NO
+MDSYS	   SDO_NETWORK_HIS_INS_TRIG	      INSTEAD OF	   USER_SDO_NETWORK_HISTORIES	  NO  NO
+MDSYS	   SDO_NETWORK_JAVA_UPD_TRIG	  INSTEAD OF	   USER_SDO_NETWORK_JAVA_OBJECTS  NO  NO
+MDSYS	   SDO_NETWORK_JAVA_DEL_TRIG	  INSTEAD OF	   USER_SDO_NETWORK_JAVA_OBJECTS  NO  NO
+MDSYS	   SDO_NETWORK_JAVA_INS_TRIG	  INSTEAD OF	   USER_SDO_NETWORK_JAVA_OBJECTS  NO  NO
+MDSYS	   SDO_NETWORK_LOCKS_UPD_TRIG	  INSTEAD OF	   USER_SDO_NETWORK_LOCKS_WM	  NO  NO
+MDSYS	   SDO_NETWORK_LOCKS_DEL_TRIG	  INSTEAD OF	   USER_SDO_NETWORK_LOCKS_WM	  NO  NO
+MDSYS	   SDO_NETWORK_LOCKS_INS_TRIG	  INSTEAD OF	   USER_SDO_NETWORK_LOCKS_WM	  NO  NO
+MDSYS	   SDO_NETWORK_TRIG_UPD 	      INSTEAD OF	   USER_SDO_NETWORK_METADATA	  NO  NO
+MDSYS	   SDO_NETWORK_TRIG_DEL 	      INSTEAD OF	   USER_SDO_NETWORK_METADATA	  NO  NO
+MDSYS	   SDO_NETWORK_TRIG_INS 	      INSTEAD OF	   USER_SDO_NETWORK_METADATA	  NO  NO
+MDSYS	   SDO_NETWORK_TIME_DEL_TRIG	  INSTEAD OF	   USER_SDO_NETWORK_TIMESTAMPS	  NO  NO
+MDSYS	   SDO_NETWORK_TIME_UPD_TRIG	  INSTEAD OF	   USER_SDO_NETWORK_TIMESTAMPS	  NO  NO
+MDSYS	   SDO_NETWORK_TIME_INS_TRIG	  INSTEAD OF	   USER_SDO_NETWORK_TIMESTAMPS	  NO  NO
+MDSYS	   SDO_NETWORK_UD_UPD_TRIG	      INSTEAD OF	   USER_SDO_NETWORK_USER_DATA	  NO  NO
+MDSYS	   SDO_NETWORK_UD_DEL_TRIG	      INSTEAD OF	   USER_SDO_NETWORK_USER_DATA	  NO  NO
+MDSYS	   SDO_NETWORK_UD_INS_TRIG	      INSTEAD OF	   USER_SDO_NETWORK_USER_DATA	  NO  NO
+MDSYS	   SDO_PREFERRED_OPS_SYS_TRIGGER  BEFORE EACH ROW  SDO_PREFERRED_OPS_SYSTEM		  NO  NO
+MDSYS	   SDO_PREFERRED_OPS_SYSTEM_TRIG  BEFORE EACH ROW  SDO_PREFERRED_OPS_SYSTEM		  NO  NO
+MDSYS	   SDO_PREFERRED_OPS_USER_TRIGGER BEFORE EACH ROW  SDO_PREFERRED_OPS_USER		  NO  NO
+SCOTT	   T_UPDATE_DEPT		         AFTER EACH ROW   DEPT 					        NO  NO
+SCOTT	   T_UPDATE_EMP 		         AFTER EACH ROW   EMP						   NO  NO
+SCOTT	   T_DEL_EMP			         BEFORE EACH ROW  EMP						   NO  NO
+56 rows selected.
+```
+
+## 三、使用 DBA_TRIGGERS 查看 Oracle 的所有触发器信息
+
+### 1、数据字典的结构
+
+```java
+SQL> DESC DBA_TRIGGERS;
+ Name										     Null?    Type
+-----------------------------------------------------------------------------------
+ OWNER											      VARCHAR2(30)
+ TRIGGER_NAME									      VARCHAR2(30)
+ TRIGGER_TYPE									      VARCHAR2(16)
+ TRIGGERING_EVENT								      VARCHAR2(227)
+ TABLE_OWNER									      VARCHAR2(30)
+ BASE_OBJECT_TYPE								      VARCHAR2(16)
+ TABLE_NAME										      VARCHAR2(30)
+ COLUMN_NAME									      VARCHAR2(4000)
+ REFERENCING_NAMES								      VARCHAR2(128)
+ WHEN_CLAUSE									      VARCHAR2(4000)
+ STATUS 										      VARCHAR2(8)
+ DESCRIPTION									      VARCHAR2(4000)
+ ACTION_TYPE									      VARCHAR2(11)
+ TRIGGER_BODY									      LONG
+ CROSSEDITION									      VARCHAR2(7)
+ BEFORE_STATEMENT								      VARCHAR2(3)
+ BEFORE_ROW										      VARCHAR2(3)
+ AFTER_ROW										      VARCHAR2(3)
+ AFTER_STATEMENT								      VARCHAR2(3)
+ INSTEAD_OF_ROW 								      VARCHAR2(3)
+ FIRE_ONCE										      VARCHAR2(3)
+ APPLY_SERVER_ONLY								      VARCHAR2(3)
+```
+
+### 2、查看 Oracle 的触发器信息
+
+```java
+SQL> SELECT COUNT(*) FROM DBA_TRIGGERS;
+  COUNT(*)
+----------
+       629
+--查看 SCOTT 用户的触发器信息
+SQL> SELECT OWNER,TRIGGER_NAME,TRIGGER_TYPE,TABLE_NAME,COLUMN_NAME 
+     FROM DBA_TRIGGERS WHERE OWNER='SCOTT';
+OWNER	   TRIGGER_NAME 		  TRIGGER_TYPE	   TABLE_NAME			  COLUMN_NAME
+---------- ------------------------------ ---------------------------------- ---------------
+SCOTT	   T_UPDATE_DEPT		  AFTER EACH ROW   DEPT
+SCOTT	   T_UPDATE_EMP 		  AFTER EACH ROW   EMP
+SCOTT	   T_DEL_EMP			  BEFORE EACH ROW  EMP
+```
+
+## 四、查询触发器所使用的的列信息
+
+### 1、USER_TRIGGER_COLS：查询当前用户的触发器所使用的列信息
+
+### （1）数据字典结构
+
+```java
+SQL> desc USER_TRIGGER_COLS;
+ Name										     Null?    Type
+ ----------------------------------------------------------------------------------- 
+ TRIGGER_OWNER									      VARCHAR2(30)
+ TRIGGER_NAME									      VARCHAR2(30)
+ TABLE_OWNER									      VARCHAR2(30)
+ TABLE_NAME										      VARCHAR2(30)
+ COLUMN_NAME									      VARCHAR2(4000)
+ COLUMN_LIST									      VARCHAR2(3)
+ COLUMN_USAGE									      VARCHAR2(17)
+```
+
+### （2）查询当前用户的触发器所使用的列信息
+
+```java
+SQL> SELECT TRIGGER_OWNER,TRIGGER_NAME,TABLE_OWNER,TABLE_NAME,COLUMN_NAME FROM USER_TRIGGER_COLS;
+TRIGGER_OWNER	  TRIGGER_NAME     TABLE_OWNER	     TABLE_NAME		    COLUMN_NAME
+------------------------------ ------------------------------ ------------------------------ ---
+SCOTT		   T_DEL_EMP	      SCOTT			     EMP			    EMPNO
+SCOTT		   T_UPDATE_EMP	      SCOTT			     EMP			    COMM
+SCOTT		   T_UPDATE_EMP	      SCOTT			     EMP			    ENAME
+SCOTT		   T_UPDATE_EMP	      SCOTT			     EMP			    EMPNO
+SCOTT		   T_UPDATE_EMP	      SCOTT			     EMP			    HIREDATE
+SCOTT		   T_UPDATE_DEPT      SCOTT			     DEPT			    DEPTNO
+SCOTT		   T_UPDATE_EMP	      SCOTT			     EMP			    MGR
+SCOTT		   T_UPDATE_EMP	      SCOTT			     EMP			    JOB
+SCOTT		   T_UPDATE_EMP	      SCOTT			     EMP			    DEPTNO
+SCOTT		   T_UPDATE_EMP	      SCOTT			     EMP			    SAL
+10 rows selected.
+```
+
+### 2、ALL_TRIGGER_COLS：查询当前用户能够访问的触发器所使用的列信息
+
+### （1）数据字典结构
+
+```java
+SQL> DESC ALL_TRIGGER_COLS;
+ Name										     Null?    Type
+ ------------------------------------------------------------------------------
+ TRIGGER_OWNER									      VARCHAR2(30)
+ TRIGGER_NAME									      VARCHAR2(30)
+ TABLE_OWNER									      VARCHAR2(30)
+ TABLE_NAME										      VARCHAR2(30)
+ COLUMN_NAME									      VARCHAR2(4000)
+ COLUMN_LIST									      VARCHAR2(3)
+ COLUMN_USAGE									      VARCHAR2(17)
+```
+
+### （2）查询当前用户能够访问的触发器所使用的列信息
+
+```java
+SQL> SELECT TRIGGER_OWNER,TRIGGER_NAME,TABLE_OWNER,TABLE_NAME,COLUMN_NAME FROM ALL_TRIGGER_COLS;
+TRIGGER_OWNER    TRIGGER_NAME	      TABLE_OWNER     TABLE_NAME 		    COLUMN_NAME
+------------------------------ ------------------------------ ------------------------------ 
+SCOTT	       T_DEL_EMP		      SCOTT			     EMP			    EMPNO
+SCOTT	       T_UPDATE_EMP		      SCOTT			     EMP			    COMM
+SCOTT	       T_UPDATE_EMP		      SCOTT			     EMP			    ENAME
+SCOTT	       T_UPDATE_EMP		      SCOTT			     EMP			    EMPNO
+SCOTT	       T_UPDATE_EMP		      SCOTT			     EMP			    HIREDATE
+SCOTT	       T_UPDATE_DEPT	      SCOTT			     DEPT			    DEPTNO
+SCOTT	       T_UPDATE_EMP		      SCOTT			     EMP			    MGR
+SCOTT	       T_UPDATE_EMP		      SCOTT			     EMP			    JOB
+SCOTT	       T_UPDATE_EMP		      SCOTT			     EMP			    DEPTNO
+SCOTT	       T_UPDATE_EMP		      SCOTT			     EMP			    SAL
+10 rows selected.
+```
+
+### 3、DAB_TRIGGER_COLS：查询所有的触发器所使用的列信息
+
+### （1）数据字典结构
+
+```java
+SQL> DESC DBA_TRIGGER_COLS;
+ Name										     Null?    Type
+ -----------------------------------------------------------------------------------
+ TRIGGER_OWNER									      VARCHAR2(30)
+ TRIGGER_NAME									      VARCHAR2(30)
+ TABLE_OWNER									      VARCHAR2(30)
+ TABLE_NAME										      VARCHAR2(30)
+ COLUMN_NAME									      VARCHAR2(4000)
+ COLUMN_LIST									      VARCHAR2(3)
+ COLUMN_USAGE									      VARCHAR2(17)
+```
+
+### （2）查询所有的触发器所使用的列信息
+
+```java
+SQL> SELECT TRIGGER_OWNER,TRIGGER_NAME,TABLE_OWNER,TABLE_NAME,COLUMN_NAME 
+     FROM DBA_TRIGGER_COLS WHERE TRIGGER_OWNER='SCOTT';
+TRIGGER_OWNER    TRIGGER_NAME	      TABLE_OWNER	     TABLE_NAME		    COLUMN_NAME
+------------------------------ ------------------------------ ------------------------------
+SCOTT	       T_DEL_EMP		      SCOTT			     EMP			    EMPNO
+SCOTT	       T_UPDATE_EMP		      SCOTT			     EMP			    COMM
+SCOTT	       T_UPDATE_EMP		      SCOTT			     EMP			    ENAME
+SCOTT	       T_UPDATE_EMP		      SCOTT			     EMP			    EMPNO
+SCOTT	       T_UPDATE_EMP		      SCOTT			     EMP			    HIREDATE
+SCOTT	       T_UPDATE_DEPT	      SCOTT			     DEPT			    DEPTNO
+SCOTT	       T_UPDATE_EMP		      SCOTT			     EMP			    MGR
+SCOTT	       T_UPDATE_EMP		      SCOTT			     EMP			    JOB
+SCOTT	       T_UPDATE_EMP		      SCOTT			     EMP			    DEPTNO
+SCOTT	       T_UPDATE_EMP		      SCOTT			     EMP			    SAL
+10 rows selected.
+```

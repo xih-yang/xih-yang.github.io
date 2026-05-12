@@ -1,0 +1,30 @@
+# DDKK 抓取结果
+
+- 入口：https://ddkk.com/zhuanlan/search/elasticsearch/3/index.html
+- 文章数：25
+
+- [Elasticsearch 实战(3) - 阅读指南](./教程目录__Elasticsearch 实战(3) - 阅读指南.md)
+- [01、ElasticSearch 实战：什么是Elasticsearch](./教程目录__01、ElasticSearch 实战：什么是Elasticsearch.md)
+- [02、ElasticSearch 实战：Elasticsearch的核心概念](./教程目录__02、ElasticSearch 实战：Elasticsearch的核心概念.md)
+- [03、ElasticSearch 实战：安装Elasticsearch、kibana](./教程目录__03、ElasticSearch 实战：安装Elasticsearch、kibana.md)
+- [04、ElasticSearch 实战：es集群健康检查和简单的索引操作](./教程目录__04、ElasticSearch 实战：es集群健康检查和简单的索引操作.md)
+- [05、ElasticSearch 实战：es的CRUD演示](./教程目录__05、ElasticSearch 实战：es的CRUD演示.md)
+- [06、ElasticSearch 实战：es的多种搜索方式](./教程目录__06、ElasticSearch 实战：es的多种搜索方式.md)
+- [07、ElasticSearch 实战：es的嵌套聚合，下钻分析，聚合分析](./教程目录__07、ElasticSearch 实战：es的嵌套聚合，下钻分析，聚合分析.md)
+- [08、ElasticSearch 实战：图解es集群的shard分配、扩容和容错机制](./教程目录__08、ElasticSearch 实战：图解es集群的shard分配、扩容和容错机制.md)
+- [09、ElasticSearch 实战：讲透document看这篇文章就够了](./教程目录__09、ElasticSearch 实战：讲透document看这篇文章就够了.md)
+- [10、ElasticSearch 实战：partial update的原理和使用](./教程目录__10、ElasticSearch 实战：partial update的原理和使用.md)
+- [11、ElasticSearch 实战：图解es并发冲突的发生过程和解决办法](./教程目录__11、ElasticSearch 实战：图解es并发冲突的发生过程和解决办法.md)
+- [12、ElasticSearch 实战：使用mget进行批量查询](./教程目录__12、ElasticSearch 实战：使用mget进行批量查询.md)
+- [13、ElasticSearch 实战：使用bulk进行批量增删改](./教程目录__13、ElasticSearch 实战：使用bulk进行批量增删改.md)
+- [14、ElasticSearch 实战：document数据路由原理](./教程目录__14、ElasticSearch 实战：document数据路由原理.md)
+- [15、ElasticSearch 实战：主副分片写一致性原理以及quorum机制](./教程目录__15、ElasticSearch 实战：主副分片写一致性原理以及quorum机制.md)
+- [16、ElasticSearch 实战：bulk api的奇特json格式与底层性能关系](./教程目录__16、ElasticSearch 实战：bulk api的奇特json格式与底层性能关系.md)
+- [17、ElasticSearch 实战：search结果分析及其timeout机制](./教程目录__17、ElasticSearch 实战：search结果分析及其timeout机制.md)
+- [18、ElasticSearch 实战：search的multi-index&amp;multi-type搜索模式](./教程目录__18、ElasticSearch 实战：search的multi-index&amp;multi-type搜索模式.md)
+- [19、ElasticSearch 实战：分页搜索以及deep paging性能问题深度图解](./教程目录__19、ElasticSearch 实战：分页搜索以及deep paging性能问题深度图解.md)
+- [20、ElasticSearch 实战：query string search语法以及_all metadata原理揭秘](./教程目录__20、ElasticSearch 实战：query string search语法以及_all metadata原理揭秘.md)
+- [21、ElasticSearch 实战：精确匹配与全文索引的对比分析](./教程目录__21、ElasticSearch 实战：精确匹配与全文索引的对比分析.md)
+- [22、ElasticSearch 实战：倒排索引核心原理](./教程目录__22、ElasticSearch 实战：倒排索引核心原理.md)
+- [23、ElasticSearch 实战：分词器的内部组成以及内置分词器介绍](./教程目录__23、ElasticSearch 实战：分词器的内部组成以及内置分词器介绍.md)
+- [24、ElasticSearch 实战：full text和exact value的查询演示](./教程目录__24、ElasticSearch 实战：full text和exact value的查询演示.md)

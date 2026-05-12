@@ -1,0 +1,31 @@
+# DDKK 抓取结果
+
+- 入口：https://ddkk.com/zhuanlan/mq/kafka/2/index.html
+- 文章数：26
+
+- [Kafka 实战(2) - 阅读指南](./教程目录__Kafka 实战(2) - 阅读指南.md)
+- [01、Kafka 实战 - kafka 简介与设计、实现分析](./教程目录__01、Kafka 实战 - kafka 简介与设计、实现分析.md)
+- [02、Kafka 实战 - kafka 核心组件](./教程目录__02、Kafka 实战 - kafka 核心组件.md)
+- [03、Kafka 实战 - kafka 命令操作](./教程目录__03、Kafka 实战 - kafka 命令操作.md)
+- [04、Kafka 实战 - Kafka Streams 转换算子详解](./教程目录__04、Kafka 实战 - Kafka Streams 转换算子详解.md)
+- [05、Kafka 实战 - Java 操作 Kafka](./教程目录__05、Kafka 实战 - Java 操作 Kafka.md)
+- [06、Kafka 实战 - Java 操作 kafka Streams](./教程目录__06、Kafka 实战 - Java 操作 kafka Streams.md)
+- [07、Kafka 实战 - Kafka Streams 基本概念及API详解](./教程目录__07、Kafka 实战 - Kafka Streams 基本概念及API详解.md)
+- [08、Kafka 实战 - Kafka 集群安装与环境测试](./教程目录__08、Kafka 实战 - Kafka 集群安装与环境测试.md)
+- [09、Kafka 实战 - 项目中使用 Kafka 整合 Flume](./教程目录__09、Kafka 实战 - 项目中使用 Kafka 整合 Flume.md)
+- [10、Kafka 实战 - Kafka 如何实现高吞吐量](./教程目录__10、Kafka 实战 - Kafka 如何实现高吞吐量.md)
+- [11、Kafka 实战 - Kafka 的备份机制](./教程目录__11、Kafka 实战 - Kafka 的备份机制.md)
+- [12、Kafka 实战 - Kafka 自定义分区器](./教程目录__12、Kafka 实战 - Kafka 自定义分区器.md)
+- [13、Kafka 实战 - broker 副本与 ISR 设计](./教程目录__13、Kafka 实战 - broker 副本与 ISR 设计.md)
+- [14、Kafka 实战 - Kafka 架构深入](./教程目录__14、Kafka 实战 - Kafka 架构深入.md)
+- [15、Kafka 实战 - 流式计算 Kafka Streams 架构深入](./教程目录__15、Kafka 实战 - 流式计算 Kafka Streams 架构深入.md)
+- [16、Kafka 实战 - Kafka 生产者（producer）生产 topic 数据常见 API](./教程目录__16、Kafka 实战 - Kafka 生产者（producer）生产 topic 数据常见 API.md)
+- [17、Kafka 实战 - Kafka Streams 示例 TemperatureDemo](./教程目录__17、Kafka 实战 - Kafka Streams 示例 TemperatureDemo.md)
+- [18、Kafka 实战 - Kafka Streams 用 Aggregation 进行聚合统计](./教程目录__18、Kafka 实战 - Kafka Streams 用 Aggregation 进行聚合统计.md)
+- [19、Kafka 实战 - Kafka Streams 自定义Serde](./教程目录__19、Kafka 实战 - Kafka Streams 自定义Serde.md)
+- [20、Kafka 实战 - Kafka Consumer 重置 Offset](./教程目录__20、Kafka 实战 - Kafka Consumer 重置 Offset.md)
+- [21、Kafka 实战 - Kafka 常用命令](./教程目录__21、Kafka 实战 - Kafka 常用命令.md)
+- [22、Kafka 实战 - Kafka Exactly Once 语义与事务机制原理](./教程目录__22、Kafka 实战 - Kafka Exactly Once 语义与事务机制原理.md)
+- [23、Kafka 实战 - Kafka 消费者组 subscribe 和 assign 的正确使用](./教程目录__23、Kafka 实战 - Kafka 消费者组 subscribe 和 assign 的正确使用.md)
+- [24、Kafka 实战 - 轻量级流计算 Kafka Streams 实践总结](./教程目录__24、Kafka 实战 - 轻量级流计算 Kafka Streams 实践总结.md)
+- [25、Kafka 实战 - 通俗易懂 ！Kafka 开发快速入门看这篇就够了](./教程目录__25、Kafka 实战 - 通俗易懂 ！Kafka 开发快速入门看这篇就够了.md)

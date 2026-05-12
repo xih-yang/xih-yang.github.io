@@ -1,0 +1,32 @@
+# DDKK 抓取结果
+
+- 入口：https://ddkk.com/zhuanlan/db/mysql/6/index.html
+- 文章数：27
+
+- [MySQL 高级进阶 - 阅读指南](./教程目录__MySQL 高级进阶 - 阅读指南.md)
+- [01、MySQL 教程 - MySQL 索引是什么？为什么使用索引？索引的优缺点？](./教程目录__01、MySQL 教程 - MySQL 索引是什么？为什么使用索引？索引的优缺点？.md)
+- [02、MySQL 教程 - MySQL 什么是聚簇索引？非聚簇索引？联合索引？回表？](./教程目录__02、MySQL 教程 - MySQL 什么是聚簇索引？非聚簇索引？联合索引？回表？.md)
+- [03、MySQL 教程 - MySQL 索引数据结构的选择](./教程目录__03、MySQL 教程 - MySQL 索引数据结构的选择.md)
+- [04、MySQL 教程 - MySQL 索引有哪几种类型？](./教程目录__04、MySQL 教程 - MySQL 索引有哪几种类型？.md)
+- [05、MySQL 教程 - MySQL 哪些情况下适合建立索引？](./教程目录__05、MySQL 教程 - MySQL 哪些情况下适合建立索引？.md)
+- [06、MySQL 教程 - MySQL 哪些情况不适合建索引？](./教程目录__06、MySQL 教程 - MySQL 哪些情况不适合建索引？.md)
+- [07、MySQL 教程 - MySQL 数据库服务器的优化步骤](./教程目录__07、MySQL 教程 - MySQL 数据库服务器的优化步骤.md)
+- [08、MySQL 教程 - MySQL 性能分析工具：查看系统的性能参数~show status](./教程目录__08、MySQL 教程 - MySQL 性能分析工具：查看系统的性能参数~show status.md)
+- [09、MySQL 教程 - MySQL 性能分析工具：查看SQL的查询成本~last_query_cost](./教程目录__09、MySQL 教程 - MySQL 性能分析工具：查看SQL的查询成本~last_query_cost.md)
+- [10、MySQL 教程 - MySQL 性能分析工具：定位执行慢的SQL~慢查询日志](./教程目录__10、MySQL 教程 - MySQL 性能分析工具：定位执行慢的SQL~慢查询日志.md)
+- [11、MySQL 教程 - MySQL 性能分析工具：查看SQL执行成本~show profilie](./教程目录__11、MySQL 教程 - MySQL 性能分析工具：查看SQL执行成本~show profilie.md)
+- [12、MySQL 教程 - MySQL 性能分析工具：explain执行计划~id列、table列、select_type列](./教程目录__12、MySQL 教程 - MySQL 性能分析工具：explain执行计划~id列、table列、select_type列.md)
+- [13、MySQL 教程 - MySQL 性能分析工具：explain执行计划~type列](./教程目录__13、MySQL 教程 - MySQL 性能分析工具：explain执行计划~type列.md)
+- [14、MySQL 教程 - MySQL 性能分析工具：explain执行计划~possible_keys列、key列、key_len列](./教程目录__14、MySQL 教程 - MySQL 性能分析工具：explain执行计划~possible_keys列、key列、key_len列.md)
+- [15、MySQL 教程 - MySQL 性能分析工具：explain执行计划~rows列、extra列](./教程目录__15、MySQL 教程 - MySQL 性能分析工具：explain执行计划~rows列、extra列.md)
+- [16、MySQL 教程 - MySQL 索引优化：索引失效的情况](./教程目录__16、MySQL 教程 - MySQL 索引优化：索引失效的情况.md)
+- [17、MySQL 教程 - MySQL 查询优化：连接查询优化](./教程目录__17、MySQL 教程 - MySQL 查询优化：连接查询优化.md)
+- [18、MySQL 教程 - MySQL 查询优化：子查询优化~排序优化~分组优化~分页优化](./教程目录__18、MySQL 教程 - MySQL 查询优化：子查询优化~排序优化~分组优化~分页优化.md)
+- [19、MySQL 教程 - MySQL 什么是覆盖索引？非聚簇索引一定会回表查询吗？](./教程目录__19、MySQL 教程 - MySQL 什么是覆盖索引？非聚簇索引一定会回表查询吗？.md)
+- [20、MySQL 教程 - MySQL 什么是索引条件下推？](./教程目录__20、MySQL 教程 - MySQL 什么是索引条件下推？.md)
+- [21、MySQL 教程 - MySQL 数据库主键应该如何设计？](./教程目录__21、MySQL 教程 - MySQL 数据库主键应该如何设计？.md)
+- [22、MySQL 教程 - MySQL 事务的ACID特性、多事务并发问题、隔离级别](./教程目录__22、MySQL 教程 - MySQL 事务的ACID特性、多事务并发问题、隔离级别.md)
+- [23、MySQL 教程 - MySQL 事务日志~redo log保证事务的持久性](./教程目录__23、MySQL 教程 - MySQL 事务日志~redo log保证事务的持久性.md)
+- [24、MySQL 教程 - MySQL 事务日志~undo log保证事务的原子性和一致性](./教程目录__24、MySQL 教程 - MySQL 事务日志~undo log保证事务的原子性和一致性.md)
+- [25、MySQL 教程 - MySQL 锁家族：解决并发事务带来问题的两种方式](./教程目录__25、MySQL 教程 - MySQL 锁家族：解决并发事务带来问题的两种方式.md)
+- [26、MySQL 教程 - MySQL 锁家族：从数据库操作的类型划分~读锁~写锁](./教程目录__26、MySQL 教程 - MySQL 锁家族：从数据库操作的类型划分~读锁~写锁.md)

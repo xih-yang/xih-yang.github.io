@@ -1,0 +1,30 @@
+# DDKK 抓取结果
+
+- 入口：https://ddkk.com/zhuanlan/other/svg/index.html
+- 文章数：25
+
+- [SVG 教程 - 阅读指南](./教程目录__SVG 教程 - 阅读指南.md)
+- [01、SVG 基础教程](./教程目录__01、SVG 基础教程.md)
+- [02、SVG 简介](./教程目录__02、SVG 简介.md)
+- [03、SVG 范例](./教程目录__03、SVG 范例.md)
+- [04、SVG 在HTML页面](./教程目录__04、SVG 在HTML页面.md)
+- [05、SVG 矩形 &lt;rect&gt;](./教程目录__05、SVG 矩形 &lt;rect&gt;.md)
+- [06、SVG 圆形 &lt;circle&gt;](./教程目录__06、SVG 圆形 &lt;circle&gt;.md)
+- [07、SVG 椭圆 &lt;ellipse&gt;](./教程目录__07、SVG 椭圆 &lt;ellipse&gt;.md)
+- [08、SVG 线段 &lt;line&gt;](./教程目录__08、SVG 线段 &lt;line&gt;.md)
+- [09、SVG 多边形 &lt;polygon&gt;](./教程目录__09、SVG 多边形 &lt;polygon&gt;.md)
+- [10、SVG 曲线 &lt;polyline&gt;](./教程目录__10、SVG 曲线 &lt;polyline&gt;.md)
+- [11、SVG 路径 &lt;path&gt;](./教程目录__11、SVG 路径 &lt;path&gt;.md)
+- [12、SVG 文本 &lt;text&gt;](./教程目录__12、SVG 文本 &lt;text&gt;.md)
+- [13、SVG 属性 stroke](./教程目录__13、SVG 属性 stroke.md)
+- [14、SVG 滤镜](./教程目录__14、SVG 滤镜.md)
+- [15、SVG 模糊效果 &lt;feGaussianBlur&gt;](./教程目录__15、SVG 模糊效果 &lt;feGaussianBlur&gt;.md)
+- [16、SVG 阴影 &lt;feOffset&gt;](./教程目录__16、SVG 阴影 &lt;feOffset&gt;.md)
+- [17、SVG 渐变 &lt;linearGradient&gt;](./教程目录__17、SVG 渐变 &lt;linearGradient&gt;.md)
+- [18、SVG 渐变 &lt;radialGradient&gt;](./教程目录__18、SVG 渐变 &lt;radialGradient&gt;.md)
+- [19、SVG 范例列表](./教程目录__19、SVG 范例列表.md)
+- [20、SVG 参考手册](./教程目录__20、SVG 参考手册.md)
+- [21、Opera9 对 SVG 支持情况 1](./教程目录__21、Opera9 对 SVG 支持情况 1.md)
+- [22、Opera9 对 SVG 支持情况 2](./教程目录__22、Opera9 对 SVG 支持情况 2.md)
+- [23、Opera9 对 SVG 支持情况 3](./教程目录__23、Opera9 对 SVG 支持情况 3.md)
+- [24、Opera9 对 SVG 支持情况 4](./教程目录__24、Opera9 对 SVG 支持情况 4.md)

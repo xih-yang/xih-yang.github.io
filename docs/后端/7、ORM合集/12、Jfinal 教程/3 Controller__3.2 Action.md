@@ -1,0 +1,65 @@
+# 3.2 Action
+- 来源：https://ddkk.com/zhuanlan/orm/jfinal/22.html
+- 分类：ORM框架
+- 分组：3 Controller
+## 1、Action 定义
+
+在Controller 之中定义的 public 方法称为Action。Action 是请求的最小单位。Action 方法必须在 Controller 中定义，且必须是 public 可见性。
+
+```java
+public class HelloController extends Controller {
+    public void index() {
+       renderText("此方法是一个action");
+    }
+    public String test() {
+       return "index.html";
+    }
+}
+```
+
+以上代码中定义了两个Action：HelloController.index()、HelloController.test()。
+
+Action可以有返回值，返回值可在拦截器中通过invocation.getReturnValue() 获取到，以便进行render控制。
+
+## 2、@NotAction 注解
+
+如果希望 controller 中的 public 方法不成为一个 action，可以使用 @NotAction 注解。@NotAction 注解通常用于引入了 BaseController 的中间 Controller，例如：
+
+```java
+public class BaseController extends Controller {
+   // 不希望成为 action，仅供子类调用，或拦截器中调用
+   @NotAction
+   public void getLoginUser() {
+   }
+}
+```
+
+## 3、控制器超类的路由映射
+
+自jfinal 3.6 开始，控制器超类中的所有方法**默认不会**被映射为 action。（也就是自 jfinal 3.6 版本开始上例中 BaseController 中的 @NotAction 默认已经不需要了，因为 BaseController 是你最终控制器 XxxController 的超类）
+
+如果希望超类中的方法也被映射为 action 只需添加一行配置：
+
+```java
+public void configRoute(Routes me) {
+    me.setMappingSuperClass(true);
+}
+```
+
+该功能属于性能优化，拥有大量路由的大型项目可加快启动速度。该配置如果配置在 "子Routes" 中，将只对该 "子Routes" 有效，例如：
+
+```java
+public FrontRoutes extends Routes {
+   public void config() {
+      // 这里配置只对 FrontRoutes 下的路由有效，建议这样配置以提升性能
+      setMappingSuperClass(true);
+      add("/weixin", WeixinController.class);
+   }
+}
+```
+
+"子Routes" 相关内容详见文档第二章 configRoute(...) 章节。
+
+> 版权声明：「DDKK.COM 弟弟快看，程序员编程资料站」本站文章，版权归原作者所有
+
+> JFinal 官方 | https://jfinal.com

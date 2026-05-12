@@ -1,0 +1,38 @@
+# 1- Redis 实战 - 介绍
+- 来源：https://ddkk.com/zhuanlan/db/redis-action/1.html
+- 分类：缓存数据库
+- 分组：教程目录
+> 原书出处：http://redisbook.com/
+
+## Redis 设计与实现
+
+欢迎来到《Redis 设计与实现》的支持网站！
+
+《Redis 设计与实现》一书全面而完整地讲解了 Redis 的内部运行机制， 对 Redis 的大多数单机功能以及所有多机功能的实现原理进行了介绍， 展示了这些功能的核心数据结构以及关键的算法思想。 通过阅读本书， 读者可以快速、有效地了解 Redis 的内部构造以及运作机制， 从而学会如何更高效地使用 Redis 。
+
+你可以通过访问本站， 或者关注本书作者的[微博](http://weibo.com/huangz1990)、[twitter](https://twitter.com/huangz1990)和[豆瓣](http://www.douban.com/people/i_m_huangz/)来获知本书的最新消息。
+
+本站内容为试读章节，购买本书请访问： [京东商城](http://item.jd.com/11486101.html) 、 [互动出版网（china-pub）](http://product.china-pub.com/3770218) 、 [亚马逊](http://www.amazon.cn/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%9B%E4%B9%A6-Redis%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0-%E9%BB%84%E5%81%A5%E5%AE%8F/dp/B00L4XHH0S) 、 [当当网](http://product.dangdang.com/23501734.html) ， 另外本书的 [Kindle 版本](http://www.amazon.cn/Redis/dp/B00LZNV5B4) 、[多看阅读版本](http://www.duokan.com/book/53962) 和 [豆瓣阅读版本](http://read.douban.com/ebook/7519526/) 也已有售。
+
+## 内容与特色介绍
+
+本书介绍了以下内容：
+
+- 字符串（string）、散列（hash）、列表（list）、集合（set）和有序集合（sorted set）这五种类型的键的底层实现数据结构。
+- Redis 的对象处理机制以及数据库的实现原理。
+- 事务实现原理。
+- 订阅与实现原理。
+- Lua 脚本功能的实现原理。
+- SORT 命令的实现原理。
+- BITOP 、 BITCOUNT 等二进制位处理命令的实现原理。
+- 慢查询日志的实现原理。
+- RDB 持久化和 AOF 持久化的实现原理。
+- Redis 事件处理器的实现原理。
+- Redis 服务器和客户端的实现原理。
+- 复制（replication）、Sentinel 和集群（cluster）这三个多机功能的实现原理。
+
+本书的特色是：
+
+- 带有丰富的图示和表格， 帮助读者更好地理解书中的知识点。
+- 关注功能的高层设计思路而不是底层的实现代码， 让读者无须花时间研读代码就可以了解到 Redis 的内部实现。
+- 提供带有中文注释的 Redis 源码， 帮助有需要的读者做进一步的学习。

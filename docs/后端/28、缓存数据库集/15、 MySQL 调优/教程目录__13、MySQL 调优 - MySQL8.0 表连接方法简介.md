@@ -1,0 +1,262 @@
+# 13、MySQL 调优 - MySQL8.0 表连接方法简介
+- 来源：https://ddkk.com/zhuanlan/db/mysql/3/13.html
+- 分类：缓存数据库
+- 分组：教程目录
+备注:测试数据库版本为MySQL 8.0
+
+## 一. Nested Loop Join算法
+
+### 1.1 普通的Nested Loop Join算法
+
+将外层表的结果集作为循环的基础数据，然后循环从该结果集每次一条获取数据作为下一个表的过滤条件去查询数据，然后合并结果。如果有多个表join，那么应该将前面的表的结果集作为循环数据，取结果集中的每一行再到下一个表中继续进行循环匹配，获取结果集并返回给客户端。
+
+```java
+for each row in t1 matching range {
+  for each row in t2 matching reference key {
+     for each row in t3 {
+      if row satisfies join conditions,
+      send to client
+    }
+  }
+ }
+```
+
+我们可以看到Nested loop join(以下简称NLJ)，对于小表驱动大表且大表上关联列存在索引的情况下，是非常快的。但是对于两个大表进行join，NLJ的需要循环非常多的次数，此时性能就会很差劲了。
+
+### 1.2 Block Nested-Loop算法
+
+MySQL BNL算法原本只支持内连接，现在已支持外连接和半连接操作,包括嵌套外连接。
+
+BNL算法原理：将外层循环的行/结果集存入join buffer，内存循环的每一行数据与整个buffer中的记录做比较，可以减少内层循环的扫描次数
+
+举个简单的例子：外层循环结果集有1000行数据，使用NLJ算法需要扫描内层表1000次，但如果使用BNL算法，则先取出外层表结果集的100行存放到join buffer, 然后用内层表的每一行数据去和这100行结果集做比较，可以一次性与100行数据进行比较，这样内层表其实只需要循环1000/100=10次，减少了9/10。
+
+伪代码:
+
+```java
+for each row in t1 matching range {
+   for each row in t2 matching reference key {
+    store used columns from t1, t2 in join buffer
+    if buffer is full {
+      for each row in t3 {
+         for each t1, t2 combination in join buffer {
+          if row satisfies join conditions,
+          send to client
+        }
+        }
+       empty buffer
+     }
+   }
+ }
+ if buffer is not empty {
+    for each row in t3 {
+     for each t1, t2 combination in join buffer {
+       if row satisfies join conditions,
+       send to client
+      }
+   }
+ }
+```
+
+### 1.3 Batched Key Access 算法
+
+对于多表join语句，当MySQL使用索引访问第二个join表的时候，使用一个join buffer来收集第一个操作对象生成的相关列值。BKA构建好key后，批量传给引擎层做索引查找。key是通过MRR接口提交给引擎的，这样，MRR使得查询更有效率。
+
+如果外部表扫描的是主键，那么表中的记录访问都是比较有序的，但是如果联接的列是非主键索引，那么对于表中记录的访问可能就是非常离散的。因此对于非主键索引的联接，Batched Key Access Join算法将能极大提高SQL的执行效率。BKA算法支持内连接，外连接和半连接操作，包括嵌套外连接。
+
+Batched Key Access Join算法的工作步骤如下：
+
+**1、** 将外部表中相关的列放入JoinBuffer中；
+
+**2、** 批量的将Key（索引键值）发送到Multi-RangeRead（MRR）接口；
+
+**3、** Multi-RangeRead（MRR）通过收到的Key，根据其对应的ROWID进行排序，然后再进行数据的读取操作；
+
+**4、** 返回结果集给客户端；
+
+Batched Key Access Join算法的本质上来说还是Simple Nested-Loops Join算法，其发生的条件为内部表上有索引，并且该索引为非主键，并且联接需要访问内部表主键上的索引。这时Batched Key Access Join算法会调用Multi-Range Read（MRR）接口，批量的进行索引键的匹配和主键索引上获取数据的操作，以此来提高联接的执行效率，因为读取数据是以顺序磁盘IO而不是随机磁盘IO进行的。
+
+使用BKA时，join_buffer_size的值定义了对存储引擎的每个请求中批量密钥的大小。缓冲区越大，对连接操作的右侧表的顺序访问就越多，这可以显着提高性能。
+
+要使用BKA，必须将optimizer_switch系统变量的batched_key_access标志设置为on。 BKA使用MRR，因此mrr标志也必须打开。目前，MRR的成本估算过于悲观。因此，mrr_cost_based也必须关闭才能使用BKA。
+
+## 二.Hash Join
+
+在8.0.18之前，MySQL只支持NestLoopJoin算法，最简单的就是Simple NestLoop Join，MySQL针对这个算法做了若干优化，实现了Block NestLoop Join，Index NestLoop Join和Batched Key Access等，有了这些优化，在一定程度上能缓解对HashJoin的迫切程度。
+
+NestLoopJoin算法简单来说，就是双重循环，遍历外表(驱动表)，对于外表的每一行记录，然后遍历内表，然后判断join条件是否符合，进而确定是否将记录吐出给上一个执行节点。从算法角度来说，这是一个M*N的复杂度。HashJoin是针对equal-join场景的优化，基本思想是，将外表数据load到内存，并建立hash表，这样只需要遍历一遍内表，就可以完成join操作，输出匹配的记录。
+
+## 三.表连接实例
+
+从Extra可以看到默认是hash join，原来默认情况下BKA算法是关闭的，关联列有索引且数据量不大，调整后，默认走的是BKA的算法。
+
+```java
+mysql> explain select ename,dname from dept d inner join emp e on d.deptno = e.deptno;
++----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+--------------------------------------------+
+| id | select_type | table | partitions | type | possible_keys | key  | key_len | ref  | rows | filtered | Extra                                      |
++----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+--------------------------------------------+
+|  1 | SIMPLE      | d     | NULL       | ALL  | PRIMARY       | NULL | NULL    | NULL |    4 |   100.00 | NULL                                       |
+|  1 | SIMPLE      | e     | NULL       | ALL  | FK_DEPTNO     | NULL | NULL    | NULL |   14 |    33.33 | Using where; Using join buffer (hash join) |
++----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+--------------------------------------------+
+2 rows in set, 1 warning (0.00 sec)
+mysql> 
+mysql> SET optimizer_switch='mrr=on,mrr_cost_based=off,batched_key_access=on';
+Query OK, 0 rows affected (0.00 sec)
+mysql> 
+mysql> explain select /*+ BKA(d,e) */ename,dname from dept d inner join emp e on d.deptno = e.deptno; 
++----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+--------------------------------------------+
+| id | select_type | table | partitions | type | possible_keys | key  | key_len | ref  | rows | filtered | Extra                                      |
++----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+--------------------------------------------+
+|  1 | SIMPLE      | d     | NULL       | ALL  | PRIMARY       | NULL | NULL    | NULL |    4 |   100.00 | NULL                                       |
+|  1 | SIMPLE      | e     | NULL       | ALL  | FK_DEPTNO     | NULL | NULL    | NULL |   14 |    33.33 | Using where; Using join buffer (hash join) |
++----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+--------------------------------------------+
+2 rows in set, 1 warning (0.00 sec)
+```
+
+### 3.1 Nest Loop Join
+
+如何走出最普通的Nest Loop Join
+
+```java
+mysql> explain format=tree select /*+ no_bka(e, d) */ename,dname from dept d inner join emp e on d.deptno = e.deptno\G  
+*************************** 1. row ***************************
+EXPLAIN: -> Nested loop inner join  (cost=4.52 rows=19)
+    -> Table scan on d  (cost=0.65 rows=4)
+    -> Index lookup on e using FK_DEPTNO (deptno=d.deptno)  (cost=0.62 rows=5)
+1 row in set (0.00 sec)
+```
+
+如何走出BKA(关联列有索引)
+
+```java
+-- 是否加hint，都是走BKA算法
+mysql> explain format=tree select ename,dname from dept d inner join emp e on d.deptno = e.deptno\G                    
+*************************** 1. row ***************************
+EXPLAIN: -> Batched key access inner join
+    -> Batch input rows
+        -> Table scan on d  (cost=0.65 rows=4)
+    -> Multi-range index lookup on e using FK_DEPTNO (deptno=d.deptno)
+1 row in set (0.00 sec)
+mysql> explain format=tree select /*+ bka(e, d) */ename,dname from dept d inner join emp e on d.deptno = e.deptno\G   
+*************************** 1. row ***************************
+EXPLAIN: -> Batched key access inner join
+    -> Batch input rows
+        -> Table scan on d  (cost=0.65 rows=4)
+    -> Multi-range index lookup on e using FK_DEPTNO (deptno=d.deptno)
+1 row in set (0.00 sec)
+```
+
+如何走出BNL（关联列没有索引）
+
+尝试了很多场景，均未走出BNL，mysql的hints的优先级是低于索引的优先级，所以很多时候即便加了hints也依旧无效。
+
+```java
+-- 非等值连接居然也用hash join(8.0.18 后尽可能的使用hash join已经支持非等值连接了)
+mysql> explain select ename,dname from dept d left join emp e on d.deptno != e.deptno ; 
++----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+--------------------------------------------+
+| id | select_type | table | partitions | type | possible_keys | key  | key_len | ref  | rows | filtered | Extra                                      |
++----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+--------------------------------------------+
+|  1 | SIMPLE      | d     | NULL       | ALL  | NULL          | NULL | NULL    | NULL |    4 |   100.00 | NULL                                       |
+|  1 | SIMPLE      | e     | NULL       | ALL  | NULL          | NULL | NULL    | NULL |   14 |   100.00 | Using where; Using join buffer (hash join) |
++----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+--------------------------------------------+
+2 rows in set, 1 warning (0.00 sec)
+-- 加了hints也没用
+mysql> explain format=tree /*+ bnl(d, e)*/select ename,dname from dept d left join emp e on d.deptno = e.deptno where e.deptno=10\G
+*************************** 1. row ***************************
+EXPLAIN: -> Inner hash join (no condition)  (cost=2.30 rows=0)
+    -> Filter: (e.deptno = 10)  (cost=1.65 rows=1)
+        -> Table scan on e  (cost=1.65 rows=14)
+    -> Hash
+        -> Filter: (d.deptno = 10)  (cost=0.65 rows=1)
+            -> Table scan on d  (cost=0.65 rows=4)
+1 row in set (0.00 sec)
+-- 删除emp和dept表的key
+alter table emp drop foreign key fk_deptno;
+alter table dept drop primary key;
+alter table emp drop key fk_deptno;
+```
+
+### 3.2 hash join
+
+**8、** 0.18后尽可能的使用hashjoin已经支持非等值连接了，这点太给力了；
+
+代码:
+
+```java
+-- 走hash join
+explain format=tree 
+select e.*
+  from emp e
+ inner join dept d
+ on e.deptno = d.deptno\G
+-- 加了hints，依旧走hash join
+explain format=tree 
+select /*+ bnl(e, d)*/e.*
+  from emp e
+ inner join dept d
+ on e.deptno = d.deptno\G
+-- 使用了no_bnl，就不走hash join了，改为走nest loop join
+explain format=tree 
+select /*+ no_bnl(e, d)*/e.*
+  from emp e
+ inner join dept d
+ on e.deptno = d.deptno\G
+-- 非等值连接也可以使用hash join
+explain format=tree 
+select /*+ bnl(e, d)*/e.*
+  from emp e
+ inner join dept d
+ on e.deptno > d.deptno\G
+```
+
+测试记录:
+
+```java
+mysql> explain format=tree 
+    -> select e.*
+    ->   from emp e
+    ->  inner join dept d
+    ->  on e.deptno = d.deptno\G
+*************************** 1. row ***************************
+EXPLAIN: -> Inner hash join (e.deptno = d.deptno)  (cost=6.50 rows=6)
+    -> Table scan on e  (cost=0.10 rows=14)
+    -> Hash
+        -> Table scan on d  (cost=0.65 rows=4)
+1 row in set (0.00 sec)
+mysql> explain format=tree 
+    -> select /*+ bnl(e, d)*/e.*
+    ->   from emp e
+    ->  inner join dept d
+    ->  on e.deptno = d.deptno\G
+*************************** 1. row ***************************
+EXPLAIN: -> Inner hash join (e.deptno = d.deptno)  (cost=6.50 rows=6)
+    -> Table scan on e  (cost=0.10 rows=14)
+    -> Hash
+        -> Table scan on d  (cost=0.65 rows=4)
+1 row in set (0.00 sec)
+mysql> explain format=tree 
+    -> select /*+ no_bnl(e, d)*/e.*
+    ->   from emp e
+    ->  inner join dept d
+    ->  on e.deptno = d.deptno\G
+*************************** 1. row ***************************
+EXPLAIN: -> Nested loop inner join  (cost=7.25 rows=6)
+    -> Table scan on d  (cost=0.65 rows=4)
+    -> Filter: (e.deptno = d.deptno)  (cost=0.29 rows=1)
+        -> Table scan on e  (cost=0.29 rows=14)
+1 row in set (0.00 sec)
+mysql> 
+mysql> explain format=tree 
+    -> select /*+ bnl(e, d)*/e.*
+    ->   from emp e
+    ->  inner join dept d
+    ->  on e.deptno > d.deptno\G
+*************************** 1. row ***************************
+EXPLAIN: -> Filter: (e.deptno > d.deptno)  (cost=6.50 rows=19)
+    -> Inner hash join (no condition)  (cost=6.50 rows=19)
+        -> Table scan on e  (cost=0.18 rows=14)
+        -> Hash
+            -> Table scan on d  (cost=0.65 rows=4)
+1 row in set (0.00 sec)
+mysql> 
+```

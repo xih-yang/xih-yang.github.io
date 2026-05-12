@@ -1,0 +1,17 @@
+# 05、Quartz 任务仍然一直执行
+- 来源：https://ddkk.com/zhuanlan/job/quartz/1/11.html
+- 分类：作业调度
+- 分组：Quartz 教程（版本 B）
+前面在Quartz执行逻辑（四）中说到任务在执行时如果获取job信息时抛了class not found的异常则Quartz会把trigger的状态置为ERROR，而状态为ERROR的trigger是不会被触发的。所以可以给这个异常加日志打印帮助排查信息，但是在misfire的时候，虽然这个class not found的日志打印了，但是任务好像还是可以执行，没有状态被置为ERROR的迹象。
+
+## misfire处理过程中job class not found
+
+所谓misfire就是一个trigger本该在某一时刻被触发，但是因为宕机，停电等原因没有触发，当系统再次恢复时，Quartz就会检测到它misfire了，要做出处理。misfire的处理策略有很多种，这里不多赘述，之后可以专门讲一下。这个misfire和执行任务的QuartzSchedulerThread线程一样，它也是一个独立的线程，不过不是一个单独的java文件的类，而是存在于JobStoreSupport类中。
+
+可以看到，misfire线程的run方法中通过manage方法获取恢复misfire job的结果，这个方法最后调用的的是JobStoreSupport的一个静态内部类的方法
+
+上面的方法存在于静态内部类RecoverMisfiredJobResult中，该方法中没有处理job信息相关的，所以我们还没有找到job class not found 是哪里抛出来的，继续向下，该方法中调用了doUpdateOfMisfiredTrigger方法，该方法中又调用了storeTrigger方法，在storeTrigger方法中看到了对job信息处理的地方：
+
+前面在Quartz执行逻辑（四）中说到了retrieveJob方法中会抛出ClassNotFoundException，之后封装成JobPresistenceException向上层抛，上层会catch住，然后把trigger的状态置为ERROR，通过misfire的调用栈，我们可以看到在misfire的处理过程中并没有这样的操作，没有对retrieveJob方法做try catch，trigger的状态不会变成ERROR，所以misfire的情况下，我们在retrieveJob方法里加的class not found的日志会一直刷。所以只需要修改上面的代码如下就可以保证报错日志只刷一次了：
+
+> 版权声明：「DDKK.COM 弟弟快看，程序员编程资料站」本站文章，版权归原作者所有

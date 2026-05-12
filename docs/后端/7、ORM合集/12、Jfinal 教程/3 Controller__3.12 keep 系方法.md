@@ -1,0 +1,65 @@
+# 3.12 keep 系方法
+- 来源：https://ddkk.com/zhuanlan/orm/jfinal/32.html
+- 分类：ORM框架
+- 分组：3 Controller
+## 1、keepPara
+
+当页面提交表单请求到 action，如果提交过来的数据存在错误或者缺失，这时应该让用户继续修改或填写表单数据，这时可以使用 keepPara 方法将用户之前填写过的内容保持住：
+
+```java
+// 保持住所有表单域
+keepPara()
+//指定保持住的表单域，如： nickName、email 等等
+keepPara("nickName", "email", ...);
+```
+
+如上，不带参的 keepPara() 方法将保持住所有表单域的内容。以上两种用法保持住的参数返回页面时，无论是什么类型都将转换成 String 类型，所以，如果表单域的类型必须要保持住的话可以使用如下的方式：
+
+```java
+// 指定 keep 后的类型为 Date
+keepPara(Date.class, "createAt");
+// 指定 keep 后的类型为 Integer
+keepPara(Integer.class, "age");
+```
+
+由于上面的 createAt、age 两个表单域 keep 时指定了类型，所以在页中就可以利用其类型参与表达式求值，例如：
+
+```java
+// 由于前面代码 keep 时指定 createAT 为 Date，所以 #date(...) 指令输出时不会抛异常
+#date(createAt)
+// 由于前面代码 keep 时指定 age 类型为 Integer，所以才可以进行 age > 18 操作
+#if (age > 18)
+...
+#end
+```
+
+当然，如果类型为 Integer、Long、Float、Double、Byte、Short、String，还可以使用 enjoy 的 extension method 来解决类型问题，例如：
+
+```sh
+#if (age.toInt() > 18)
+...
+#end
+```
+
+如上所示，age 被 keepPara() 后为 String 型，那么 age.toInt() 会将其转化成 Integer 型。extension method 更多文档请见：[https://www.jfinal.com/doc/6-9](https://www.jfinal.com/doc/6-9)
+
+keepPara 一般用在 Validator 或者拦截器之中，在本站首页右侧可以下载 jfinal demo for maven，里面有实际的例子。
+
+## 2、keepModel 与 keepBean
+
+keepModel 可以将以 modelName 前缀的表单域保持住内容与类型，例如：
+
+```xml
+<input name="blog.title"   value="#(blog.title ??)"/>
+<input name="blog.content" value="#(blog.content ??)" />
+```
+
+如上所示，表单域是以前缀为 blog 的 model，提交到后端是通过 getModel 来接收数据，如果提交的数据不完整或者有错误可以使用 keepModel 保持住内容返回给页面，让用户继续填写。
+
+keepBean 与 keepModel 的功能相似，只不过 keepBean 针对的是传统 java bean，而不是 Model。当然，如果 Model 使用生成器生成了 setter 方法，使用 keepBean 也可以。
+
+注意：keepModel 与 keepBean 都可以 keep 住表单域原有的类型，无需指定类型。
+
+> 版权声明：「DDKK.COM 弟弟快看，程序员编程资料站」本站文章，版权归原作者所有
+
+> JFinal 官方 | https://jfinal.com

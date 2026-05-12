@@ -1,0 +1,31 @@
+# DDKK 抓取结果
+
+- 入口：https://ddkk.com/zhuanlan/guarantee/sentinel/index.html
+- 文章数：26
+
+- [Sentinel 教程 - 阅读指南](./Sentinel 之 使用教程（A）__Sentinel 教程 - 阅读指南.md)
+- [1、Sentinel 简介+安装控制台](./Sentinel 之 使用教程（A）__1、Sentinel 简介+安装控制台.md)
+- [2、Sentinel Spring Cloud集成Sentinel及简单流控示例](./Sentinel 之 使用教程（A）__2、Sentinel Spring Cloud集成Sentinel及简单流控示例.md)
+- [3、Sentinel 相关概念详解（摘自官方）](./Sentinel 之 使用教程（A）__3、Sentinel 相关概念详解（摘自官方）.md)
+- [4、Sentinel 服务雪崩效应及容错方案](./Sentinel 之 使用教程（A）__4、Sentinel 服务雪崩效应及容错方案.md)
+- [5、Sentinel 控制台功能详解之流控规则](./Sentinel 之 使用教程（A）__5、Sentinel 控制台功能详解之流控规则.md)
+- [6、Sentinel 控制台功能详解之降级规则+热点规则+授权规则+系统规则](./Sentinel 之 使用教程（A）__6、Sentinel 控制台功能详解之降级规则+热点规则+授权规则+系统规则.md)
+- [7、Sentinel 之@SentinelResource注解](./Sentinel 之 使用教程（A）__7、Sentinel 之@SentinelResource注解.md)
+- [8、Sentinel 使用 Nacos 配置规则](./Sentinel 之 使用教程（A）__8、Sentinel 使用 Nacos 配置规则.md)
+- [9、Sentinel 控制台源码解析之流控规则添加查询](./Sentinel 之 使用教程（A）__9、Sentinel 控制台源码解析之流控规则添加查询.md)
+- [10、Sentinel 控制台源码改造实现流控规则持久化](./Sentinel 之 使用教程（A）__10、Sentinel 控制台源码改造实现流控规则持久化.md)
+- [11、Sentinel Spring Cloud Gateway整合Sentinel实现网关限流](./Sentinel 之 使用教程（A）__11、Sentinel Spring Cloud Gateway整合Sentinel实现网关限流.md)
+- [12、Sentinel 之实时监控](./Sentinel 之 使用教程（A）__12、Sentinel 之实时监控.md)
+- [1、Sentinel Linux搭建，控制台环境搭建及使用介绍](./Sentinel 之 实战教程（B）__1、Sentinel Linux搭建，控制台环境搭建及使用介绍.md)
+- [2、Sentinel Docker搭建，控制台环境搭建及使用介绍](./Sentinel 之 实战教程（B）__2、Sentinel Docker搭建，控制台环境搭建及使用介绍.md)
+- [3、Sentinel 整合 SpringCloudAlibaba实现流量控制、熔断降级、热点参数限流、系统自我保护、网关流量控制等规则配置](./Sentinel 之 实战教程（B）__3、Sentinel 整合 SpringCloudAlibaba实现流量控制、熔断降级、热点参数限流、系统自我保护、网关流量控制等规则配置.md)
+- [4、Sentinel 整合 Gateway实现网关流控控制台及规则配置](./Sentinel 之 实战教程（B）__4、Sentinel 整合 Gateway实现网关流控控制台及规则配置.md)
+- [5、Sentinel 整合 Nacos实现动态规则配置持久化、双向同步](./Sentinel 之 实战教程（B）__5、Sentinel 整合 Nacos实现动态规则配置持久化、双向同步.md)
+- [1、Sentinel 快速实现限流](./Sentinel 之 使用教程（C）__1、Sentinel 快速实现限流.md)
+- [2、Sentinel 重要概念](./Sentinel 之 使用教程（C）__2、Sentinel 重要概念.md)
+- [3、Sentinel 限流原理分析](./Sentinel 之 使用教程（C）__3、Sentinel 限流原理分析.md)
+- [4、Sentinel 滑动窗口](./Sentinel 之 使用教程（C）__4、Sentinel 滑动窗口.md)
+- [5、Sentinel 控制台使用和源码](./Sentinel 之 使用教程（C）__5、Sentinel 控制台使用和源码.md)
+- [6、Sentinel 控制台和客户端通信原理](./Sentinel 之 使用教程（C）__6、Sentinel 控制台和客户端通信原理.md)
+- [7、Sentinel API、注解、整合Feign](./Sentinel 之 使用教程（C）__7、Sentinel API、注解、整合Feign.md)
+- [8、Sentinel 规则持久化](./Sentinel 之 使用教程（C）__8、Sentinel 规则持久化.md)
